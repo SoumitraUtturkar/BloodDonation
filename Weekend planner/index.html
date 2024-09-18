@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weekend Planner</title>
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <!-- Header Section -->
+  <header>
+    <h1>Weekend Planner</h1>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <div class="dropdown">
+        <button class="dropbtn">Destinations</button>
+        <div class="dropdown-content">
+          <a href="gateway.html">Weekend Getaways</a>
+          <a href="budget.html">Budget-Friendly</a>
+        </div>
+      </div>
+      <a href="weather.html">Weather</a>
+      <a href="nearby.html">Nearby</a>
+    </nav>
+  </header>
+
+  <!-- Search Bar Section -->
+  <nav class="search-bar">
+    <input type="text" id="search-bar" placeholder="Search...">
+    <button onclick="searchNearby()">Search</button>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <section class="intro">
+      <h1>Plan Your Perfect Weekend</h1>
+      <p>Discover exciting nearby places, events, and activities for your weekends.</p>
+    </section>
+
+    <section class="cards">
+      <!-- Nearby Places -->
+      <div class="card">
+        <h3>Explore Nearby Places</h3>
+        <p>From parks to beaches, explore beautiful places for outdoor fun.</p>
+        <a href="nearby.html" class="button">View Places</a>
+      </div>
+
+      <!-- Events -->
+      <div class="card">
+        <h3>Upcoming Events</h3>
+        <p>Check out local concerts, festivals, and weekend events.</p>
+        <a href="event.html" class="button">View Events</a>
+      </div>
+
+      <!-- Weekend Getaways -->
+      <div class="card">
+        <h3>Weekend Getaways</h3>
+        <p>Discover nearby destinations for a quick weekend escape.</p>
+        <a href="gateway.html" class="button">Explore Getaways</a>
+      </div>
+
+      <!-- Budget-Friendly -->
+      <div class="card">
+        <h3>Budget-Friendly Activities</h3>
+        <p>Find free or low-cost activities for your weekend plans.</p>
+        <a href="budget.html" class="button">View Budget-Friendly</a>
+      </div>
+
+      <!-- Weather -->
+      <div class="card">
+        <h3>Check the Weather</h3>
+        <p>Plan better by checking the current weather conditions.</p>
+        <a href="weather.html" class="button">View Forecast</a>
+      </div>
+    </section>
+
+    <div class="buttons">
+      <a href="nearby.html" class="button">Explore More</a>
+    </div>
+  </main>
+
+  <!-- Footer Section -->
+  <footer>
+    <p>© 2024 Weekend Planner</p>
+  </footer>
+
+  <!-- JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>

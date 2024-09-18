@@ -1,0 +1,64 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #F2F2F2;
+  color: #4A4A4A;
+}
+
+/* Header Styles */
+header {
+  background-color: #4A90E2;
+  padding: 1.5rem;
+  color: white;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between; /* Align header elements */
+  align-items: center;
+}
+
+.header-container h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+/* Button Styles in Header */
+.button-container {
+  display: flex;
+  gap: 1rem; /* Space between buttons */
+}
+
+.button {
+  background-color: #F5A623;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #50E3C2;
+}
+
+/* About Section */
+.about-section {
+  padding: 2rem;
+  text-align: center;
+  color: #4A4A4A;
+}
+
+/* Footer Styles */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #4A90E2;
+  color: white;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}

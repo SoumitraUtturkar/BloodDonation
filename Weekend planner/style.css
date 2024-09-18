@@ -1,0 +1,145 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-image: url('images/bg3.jpeg');
+  background-size: cover;
+  background-color: #f4f4f4;
+  color: #fbfbfb;
+  padding: 20px;
+}
+
+/* Header Styles */
+header {
+  background-color: #0c316e;
+  color: white;
+  padding: 0.5px 0;
+  text-align: center;
+  font-size: 35px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+/* Navbar Styles */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0c316e;
+  padding: 15px 30px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-links {
+  display: flex;
+  gap: 10px; /* Adds space between the nav links */
+}
+
+.nav a {
+  color: white;
+  font-weight: 600;
+  font-size: 27px;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.nav a:hover {
+  background-color: #007B9A;
+  border-radius: 5px;
+}
+
+/* Dropdown Menu Styles */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #50E3C2;
+}
+
+main {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.intro {
+  margin-bottom: 20px;
+  color: rgb(3, 84, 205);
+}
+
+.intro p {
+  color: rgb(3, 84, 205);
+}
+
+.buttons {
+  margin-top: 50px;
+}
+
+.button {
+  background-color: #008CBA;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 10px;
+  margin-top: 10px;
+}
+
+.button:hover {
+  background-color: #007B9A;
+}
+
+.places ul {
+  list-style: none;
+  padding: 0;
+}
+
+.places li {
+  background-color: #fff;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+.footer {
+  background-color: #0c316e;
+  padding: 1rem;
+  text-align: center;
+  color: white;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}

@@ -1,0 +1,133 @@
+/* Weather page specific styles */
+.weather-section {
+    padding: 3rem;
+    background-color: #ECF0F1;
+  }
+  
+  .weather-info {
+    display: flex;
+    justify-content: space-around;
+    padding: 2rem;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .weather-info .card {
+    background-color: #FFFFFF;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .weather-info .card h3 {
+    color: #2980B9;
+  }
+  
+  .weather-info .card p {
+    color: #4A4A4A;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  header{
+    /* Same header styles as the about page */
+    background-color: #4A90E2;
+    padding: 1.5rem;
+    color: white;
+  }
+  
+  /* Budget Section */
+  .budget-section {
+    padding: 2rem;
+  }
+  
+  .card {
+    background-color: #FFFFFF;
+    border-radius: 200px;
+    padding: 1.5rem;
+    margin: 1rem;
+
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .card h3 {
+    color: #4A90E2;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #4A90E2;
+    color: white;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+  }
+  .header-container {
+    display: flex;
+    justify-content: space-between; /* Align header elements */
+    align-items: center;
+  }
+  
+  .header-container h1 {
+    margin: 0;
+    font-size: 2rem;
+  }
+  
+  /* Button Styles in Header */
+  .button-container {
+    display: flex;
+    gap: 1rem; /* Space between buttons */
+  }
+  
+  .button {
+    background-color: #F5A623;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background-color: #50E3C2;
+  }
+  .weather-sectionn {
+    display: flex;
+    justify-content: center; /* Center the card */
+    margin-top: 30px;
+  }
+  
+  /* Inner card in the weather section */
+  .weather-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%; /* Make the card take full width */
+    max-width: 800px; /* Set maximum width */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .weather-card h3 {
+    color: #0c316e;
+    font-size: 2rem; /* Increase heading size */
+    margin-bottom: 20px;
+  }
+  
+  .weather-card p {
+    color: #333;
+    margin-bottom: 20px;
+  }

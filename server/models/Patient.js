@@ -12,6 +12,7 @@ const patientSchema = new mongoose.Schema({
         required: true,
         enum: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']
     },
+    hospital : {type:String, required: true},
     location: { type: String, required: true },
     photo : String
 },{ timestamps: true });

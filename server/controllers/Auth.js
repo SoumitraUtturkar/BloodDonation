@@ -6,18 +6,19 @@ require("dotenv").config();
 // SignUp
 exports.signup = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password} = req.body;
 
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser)
             return res.status(400).json({ error: "Email already exists" });
 
+
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create new user
-        const user = new User({ name, email, password: hashedPassword, role });
+        const user = new User({ name, email, password: hashedPassword });
         const newUser = await user.save();
 
         res.status(201).json({
@@ -53,7 +54,7 @@ exports.login = async (req, res) => {
             return res.status(400).json({ error: "Invalid Email or Password" });
 
         // Create JWT payload
-        const payload = { email: user.email, id: user._id, role: user.role };
+        const payload = { email: user.email, id: user._id };
 
         // Generate token with expiration
         let token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -81,3 +82,4 @@ exports.login = async (req, res) => {
         return res.status(400).json({ success: false, error: error.message });
     }
 };
+

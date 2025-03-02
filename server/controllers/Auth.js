@@ -6,12 +6,16 @@ require("dotenv").config();
 // SignUp
 exports.signup = async (req, res) => {
     try {
-        const { name, email, password} = req.body;
+        const { name, email, password,confirmPassword} = req.body;
 
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser)
             return res.status(400).json({ error: "Email already exists" });
+        
+        // Check if passwords match
+        if (password!== confirmPassword)
+            return res.status(400).json({ error: "Passwords do not match" });
 
 
         // Hash password

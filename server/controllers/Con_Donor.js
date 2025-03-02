@@ -1,6 +1,6 @@
 const Donor = require("../models/Donor");
 const User = require("../models/User");
-
+const Patient = require("../models/Patient");
 exports.registerDonor = async (req, res) => {
     try {
         // 1️⃣ Extract user ID from auth middleware (req.user is set in auth middleware)
@@ -35,6 +35,22 @@ exports.registerDonor = async (req, res) => {
         await donor.save();
 
         res.status(201).json({ success: true, message: "Donor profile created successfully", donor });
+
+    } catch (error) {
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+exports.getAllRequests = async (req, res) => {
+    try {
+        // Fetch all patient requests
+        const requests = await Patient.find().sort({ createdAt: -1 }); // Newest first
+
+        if (requests.length === 0) {
+            return res.status(404).json({ success: false, message: "No blood requests found" });
+        }
+
+        res.status(200).json({ success: true, requests });
 
     } catch (error) {
         return res.status(500).json({ success: false, error: error.message });

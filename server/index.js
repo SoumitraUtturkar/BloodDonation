@@ -9,9 +9,13 @@ dbConnect();
 app.use(express.json())
 const PORT = process.env.PORT ||4000
 const user = require("./routes/user");
-const Donor = require('./models/Donor');
+const patient = require("./routes/patientRoutes");
 //routes
 app.use("/api/v1", user);
+
+app.use("/api/v2", patient);
+
+
 
 
 app.get('/', (req,res)=>{

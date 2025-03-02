@@ -27,16 +27,3 @@ exports.registerDonor = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
-
-router.get("/requests", async (req, res) => {
-    try {
-        let filter = {};
-        if (req.query.bloodType) {
-            filter.bloodType = req.query.bloodType;
-        }
-        const requests = await BloodRequest.find(filter);
-        res.status(200).json(requests);
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error });
-    }
-});

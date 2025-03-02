@@ -6,8 +6,6 @@ const router  = express.Router()
 const {login,signup,logout} = require('../controllers/Auth')
 const {auth,isPatient,isAdmin} = require('../middlewares/auth')
 
-
-
 // Get all users
 router.post('/login', login)
 router.post('/signup',signup)

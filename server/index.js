@@ -13,11 +13,12 @@ const PORT = process.env.PORT ||4000
 const user = require("./routes/user");
 const patient = require("./routes/patientRoutes");
 const Donor = require('./routes/donorRoute');
+const bloodbank = require('./routes/bloodbankRoutes');
 //routes
 app.use("/api/v1", user);
 app.use("/api/v2", Donor);
 app.use("/api/v2", patient);
-
+app.use("/api/v3", bloodbank);
 
 
 

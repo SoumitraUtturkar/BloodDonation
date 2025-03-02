@@ -17,7 +17,11 @@ const bloodbank = require('./routes/bloodbankRoutes');
 //routes
 app.use("/api/v1", user);
 app.use("/api/v2", Donor);
+<<<<<<< HEAD
 app.use("/api/v3", patient);
+=======
+app.use("/api/v2", patient);
+>>>>>>> c0390e918da113573762a06ccfc29829daaa98e8
 app.use("/api/v4", bloodbank);
 
 

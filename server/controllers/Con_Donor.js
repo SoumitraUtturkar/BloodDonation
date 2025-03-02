@@ -1,6 +1,11 @@
 const Donor = require("../models/Donor");
 const User = require("../models/User");
 const Patient = require("../models/Patient");
+<<<<<<< HEAD
+=======
+
+exports.getAllRequests = async (req, res) => {
+>>>>>>> c0390e918da113573762a06ccfc29829daaa98e8
 
 // ✅ Register a Donor
 exports.registerDonor = async (req, res) => {

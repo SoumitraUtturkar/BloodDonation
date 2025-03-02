@@ -17,8 +17,8 @@ const bloodbank = require('./routes/bloodbankRoutes');
 //routes
 app.use("/api/v1", user);
 app.use("/api/v2", Donor);
-app.use("/api/v2", patient);
-app.use("/api/v3", bloodbank);
+app.use("/api/v3", patient);
+app.use("/api/v4", bloodbank);
 
 
 

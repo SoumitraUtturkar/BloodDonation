@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 
 const donorSchema = new mongoose.Schema({
-  first_name: { type: String, required: true },
-  last_name: { type: String, required: true },
+  name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   phone_no: { type: String, required: true },
   age: { type: Number, required: true, min: 18, max: 65 }, //blood donation sathi age limit aste!

@@ -1,18 +1,18 @@
-const express = require('express')
+const express = require('express');
 
-const router  = express.Router()
+const router  = express.Router();
 
 // Define the routes
 const {login,signup,logout} = require('../controllers/Auth')
-const {auth,isPatient,isAdmin} = require('../middlewares/auth')
+const {protectRoute} = require('../middlewares/auth')
 
 // Get all users
-router.post('/login', login)
+router.post('/login',login)
 router.post('/signup',signup)
 router.post('/logout',logout)
 
-router.get('/test',auth,(req,res)=>{
-    res.json({success:true,message: 'Test route'})
-} )
+// router.get('/test',auth,(req,res)=>{
+//     res.json({success:true,message: 'Test route'})
+// } )
 
 module.exports = router

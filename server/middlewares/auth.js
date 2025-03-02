@@ -1,4 +1,4 @@
-// const jwt = require("jsonwebtoken");
+//  const jwt = require("jsonwebtoken");
 // require("dotenv").config();
 
 // exports.auth = async (req, res, next) => {
@@ -23,31 +23,41 @@
 //     }
 // };
 
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+const jwt = require("jsonwebtoken"); // ✅ Import jwt
+const User = require("../models/User");
 
-exports.auth = async (req, res, next) => {
-    try {
-        // Extract token from Authorization header
-        const authHeader = req.headers.authorization;
+const protectRoute = async (req, res, next) => {
+  try {
+    const token = req.cookies.token; // ✅ Fix: Use "token" instead of "jwt"
 
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return res.status(401).json({ success: false, message: "Access denied. No token provided." });
-        }
-
-        const token = authHeader.split(" ")[1]; // Extract token
-
-        try {
-            // Verify token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = decoded; // Attach user data to request
-            next(); // Proceed to next middleware
-        } catch (err) {
-            return res.status(401).json({ success: false, message: "Invalid or expired token." });
-        }
-    } catch (error) {
-        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized - No Token Provided" });
     }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!decoded) {
+      return res.status(401).json({ message: "Unauthorized - Invalid Token" });
+    }
+
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error("Error in protectRoute middleware:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
+
+module.exports = protectRoute; // ✅ Fix: Export properly
+
+
+
+
 
 

@@ -1,6 +1,6 @@
 const BloodRequest = require("../models/Patient");
 
-// ✅ Create a Blood Request
+//   Create a Blood Request
 exports.createRequest = async (req, res) => {
     try {
         const { patient_name, guardian_name, email, phone, bloodType, hospital, location, photo } = req.body;
@@ -27,10 +27,10 @@ exports.createRequest = async (req, res) => {
     }
 };
 
-// ✅ Delete a Blood Request
+//   Delete a Blood Request
 
 
-// ✅ Delete a Blood Request
+//   Delete a Blood Request
 exports.deleteRequest = async (req, res) => {
     try {
         const { id } = req.params;
@@ -54,7 +54,7 @@ exports.deleteRequest = async (req, res) => {
     }
 };
 
-// ✅ Update a Blood Request
+//   Update a Blood Request
 exports.updateRequest = async (req, res) => {
     try {
         const { id } = req.params;

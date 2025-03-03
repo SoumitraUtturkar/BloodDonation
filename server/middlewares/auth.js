@@ -23,12 +23,12 @@
 //     }
 // };
 
-const jwt = require("jsonwebtoken"); // ✅ Import jwt
+const jwt = require("jsonwebtoken"); //  Import jwt
 const User = require("../models/User");
 
 const protectRoute = async (req, res, next) => {
   try {
-    const token = req.cookies.token; // ✅ Fix: Use "token" instead of "jwt"
+    const token = req.cookies.token; //  Use "token" instead of "jwt"
 
     if (!token) {
       return res.status(401).json({ message: "Unauthorized - No Token Provided" });
@@ -54,7 +54,7 @@ const protectRoute = async (req, res, next) => {
   }
 };
 
-module.exports = protectRoute; // ✅ Fix: Export properly
+module.exports = protectRoute; //  : Export properly
 
 
 

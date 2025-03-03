@@ -1,4 +1,4 @@
-const User = require("../models/User");  // ✅ Ensure correct filename capitalization
+const User = require("../models/User");  //   Ensure correct filename capitalization
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -23,7 +23,7 @@ exports.signup = async (req, res) => {
         // Create new user
         const user = new User({ name, email, password: hashedPassword });
         const newUser = await user.save();
-        newUser.password = undefined;  // ✅ Remove password from response
+        newUser.password = undefined;  //   Remove password from response
 
         res.status(201).json({
             success: true,
@@ -75,6 +75,6 @@ exports.login = async (req, res) => {
 
 // Logout
 exports.logout = async (req, res) => {
-    res.cookie("token", "", { expires: new Date(0), httpOnly: true }); // ✅ Ensure token is expired
+    res.cookie("token", "", { expires: new Date(0), httpOnly: true }); //   Ensure token is expired
     res.status(200).json({ success: true, message: "User logged out successfully" });
 };

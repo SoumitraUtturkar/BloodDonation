@@ -2,7 +2,7 @@ const Donor = require("../models/Donor");
 const User = require("../models/User");
 const Patient = require("../models/Patient");
 
-// ✅ Register a Donor
+//   Register a Donor
 exports.registerDonor = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -37,7 +37,7 @@ exports.registerDonor = async (req, res) => {
     }
 };
 
-// ✅ Get All Blood Requests
+//   Get All Blood Requests
 exports.getAllRequests = async (req, res) => {
     try {
         const requests = await Patient.find().sort({ createdAt: -1 });
@@ -53,7 +53,7 @@ exports.getAllRequests = async (req, res) => {
     }
 };
 
-// ✅ Update Donor Details
+//   Update Donor Details
 exports.updateDonor = async (req, res) => {
     try {
       const donorId = req.params.id; // Extract donor ID from params

@@ -6,6 +6,7 @@ import Contact from "./Pages/Contact.jsx";
 import Signup from "./Pages/Signup.jsx";
 import RequestBlood from "./Pages/RequestBlood.jsx";
 import DonateBlood from "./Pages/DonateBlood.jsx";
+import BloodBankForm from "./Pages/BloodBankForm.jsx";
 import Navbar from "./Components/Navbar.jsx";
 import "./index.css";
 import Login from "./Pages/Login.jsx";
@@ -23,6 +24,7 @@ function App() {
         <Route path="/request-blood" element={<RequestBlood />} />
         <Route path="/request-blood" element={<RequestBlood />} />
         <Route path="/donate-blood" element={<DonateBlood />} />
+        <Route path="/register" element={<BloodBankForm />} />
       </Routes>
       <About/>
       <Contact/>

@@ -44,7 +44,6 @@ exports.login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: "Enter email and password" });
     }
-
     let user = await User.findOne({ email });
     if (!user) return res.status(404).json({ error: "User not found" });
 

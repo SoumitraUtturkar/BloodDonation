@@ -1,7 +1,30 @@
-export default function App() {
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Home from "./Pages/Home.jsx";
+import About from "./Pages/About.jsx";
+import Contact from "./Pages/Contact.jsx";
+import Signup from "./Pages/Signup.jsx";
+import RequestBlood from "./Pages/RequestBlood.jsx";
+import DonateBlood from "./Pages/DonateBlood.jsx";
+import Navbar from "./Components/Navbar.jsx";
+import "./index.css";
+
+function App() {
   return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
-  )
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/request-blood" element={<RequestBlood />} />
+        <Route path="/donate-blood" element={<DonateBlood />} />
+      </Routes>
+      <About/>
+      <Contact/>
+    </>
+  );
 }
+
+export default App;

@@ -1,7 +1,8 @@
 import React from "react";
 import Button from "../Components/Button";
-import Cards from "../Components/Card";
-import AboutUs from "../Components/About";// Import About Us component
+import Cards from "../Components/Cards";
+import AboutUs from "../Components/about";// Import About Us component
+import ContactUs from "../Components/Contact";
 
 const Home = () => {
   return (
@@ -51,6 +52,10 @@ const Home = () => {
       {/* About Us Section */}
       <section id="about-us">
         <AboutUs /> {/* This section is now scrollable via an anchor link */}
+      </section>
+
+      <section id="contact-us">
+        <ContactUs /> {/* This section is now scrollable via an anchor link */}
       </section>
     </div>
   );

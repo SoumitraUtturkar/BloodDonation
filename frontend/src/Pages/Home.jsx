@@ -3,32 +3,37 @@ import Button from "../Components/Button";
 
 const Home = () => {
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center space-y-6 bg-cover bg-center"
-       // ✅ Update with your image path
-    >
-      <div className="bg-white bg-opacity-80 p-6 rounded-lg shadow-md text-center">
-        <h1 className="text-3xl font-bold text-red-700 mb-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center p-8">
+      <div className="bg-white bg-opacity-90 p-12 rounded-xl text-center w-full max-w-3xl">
+        <h1 className="text-5xl font-bold text-red-700 mb-10">
           Welcome to RaktVahini
         </h1>
-        <Button
-          text="Register as a Blood Bank"
-          color="bg-red-500 hover:bg-red-700"
-          link="/register"
-        />
-        <Button
-          text="Request Blood"
-          color="bg-blue-500 hover:bg-blue-700"
-          link="/request-blood"
-        />
-        <Button
-          text="Donate Blood"
-          color="bg-green-500 hover:bg-green-700"
-          link="/donate-blood"
-        />
+        <div className="flex justify-center gap-8">
+          <Button
+            text="Register as a Blood Bank"
+            color="bg-red-600 hover:bg-red-800 text-white py-4 px-10 rounded-lg text-xl font-semibold transition-all duration-300 w-64 h-16 flex items-center justify-center"
+            link="/register"
+          />
+          <Button
+            text="Request Blood"
+            color="bg-red-600 hover:bg-red-800 text-white py-4 px-10 rounded-lg text-xl font-semibold transition-all duration-300 w-64 h-16 flex items-center justify-center"
+            link="/request-blood"
+          />
+          <Button
+            text="Donate Blood"
+            color="bg-red-600 hover:bg-red-800 text-white py-4 px-10 rounded-lg text-xl font-semibold transition-all duration-300 w-64 h-16 flex items-center justify-center"
+            link="/donate-blood"
+          />
+        </div>
       </div>
     </div>
   );
 };
 
 export default Home;
+
+
+
+
+
+

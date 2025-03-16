@@ -44,15 +44,24 @@ const Navbar = () => {
           </li>
         </ul>
 
-        {/* Right Section: Sign Up Button */}
-        <Link to="/signup">
-          <button className="bg-white text-red-600 px-6 py-2 font-semibold rounded-md shadow-md hover:bg-gray-200 transition duration-300">
-            Sign Up
-          </button>
-        </Link>
+        {/* Right Section: Login & Sign Up Buttons */}
+        <div className="flex space-x-4">
+          <Link to="/login">
+            <button className="w-28 h-10 bg-white text-red-600 font-semibold rounded-md shadow-md hover:bg-gray-200 transition duration-300">
+              Login
+            </button>
+          </Link>
+          <Link to="/signup">
+            <button className="w-28 h-10 bg-white text-red-600 font-semibold rounded-md shadow-md hover:bg-gray-200 transition duration-300">
+              Sign Up
+            </button>
+          </Link>
+        </div>
       </div>
     </nav>
   );
 };
 
 export default Navbar;
+
+

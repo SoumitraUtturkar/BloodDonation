@@ -8,6 +8,7 @@ import RequestBlood from "./Pages/RequestBlood.jsx";
 import DonateBlood from "./Pages/DonateBlood.jsx";
 import Navbar from "./Components/Navbar.jsx";
 import "./index.css";
+import Login from "./Pages/Login.jsx";
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/request-blood" element={<RequestBlood />} />
         <Route path="/request-blood" element={<RequestBlood />} />
         <Route path="/donate-blood" element={<DonateBlood />} />
       </Routes>
@@ -28,3 +31,4 @@ function App() {
 }
 
 export default App;
+

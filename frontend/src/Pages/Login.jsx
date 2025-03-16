@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 
-const Signup = () => {
+const Login = () => {
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
   });
@@ -13,7 +12,7 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Signup Data:", formData);
+    console.log("Login Data:", formData);
   };
 
   return (
@@ -23,17 +22,8 @@ const Signup = () => {
         className="bg-white p-6 shadow-md rounded-lg w-96"
       >
         <h2 className="text-2xl font-bold text-center text-red-600 mb-4">
-          Sign Up
+          Login
         </h2>
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          className="w-full p-2 border rounded-md mb-3"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
         <input
           type="email"
           name="email"
@@ -56,11 +46,11 @@ const Signup = () => {
           type="submit"
           className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition duration-300"
         >
-          Sign up
+          Login
         </button>
       </form>
     </div>
   );
 };
 
-export default Signup;
+export default Login;

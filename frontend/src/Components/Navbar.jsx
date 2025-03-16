@@ -27,12 +27,14 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link
-              to="/about"
-              className="hover:bg-white hover:text-red-600 px-4 py-2 rounded-md transition duration-300"
-            >
-              About
-            </Link>
+            {/* About Link with Scroll Effect */}
+            <a
+            href="#about-us"
+            className="hover:bg-white hover:text-red-600 px-4 py-2 rounded-md transition duration-300"
+          >
+            About
+          </a>
+              
           </li>
           <li>
             <Link

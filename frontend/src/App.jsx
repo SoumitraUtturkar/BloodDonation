@@ -6,10 +6,10 @@ import Contact from "./Pages/Contact.jsx";
 import Signup from "./Pages/Signup.jsx";
 import RequestBlood from "./Pages/RequestBlood.jsx";
 import DonateBlood from "./Pages/DonateBlood.jsx";
-import BloodBankForm from "./Pages/BloodBankForm.jsx";
 import Navbar from "./Components/Navbar.jsx";
 import "./index.css";
 import Login from "./Pages/Login.jsx";
+import BloodBankForm from "./Pages/BloodBankForm.jsx"
 
 function App() {
   return (
@@ -21,16 +21,13 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<BloodBankForm />} />
         <Route path="/request-blood" element={<RequestBlood />} />
         <Route path="/request-blood" element={<RequestBlood />} />
         <Route path="/donate-blood" element={<DonateBlood />} />
-        <Route path="/register" element={<BloodBankForm />} />
       </Routes>
-      <About/>
-      <Contact/>
     </>
   );
 }
 
-export default App;
-
+export default App;

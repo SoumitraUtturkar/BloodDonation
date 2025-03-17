@@ -10,6 +10,10 @@ import Navbar from "./Components/Navbar.jsx";
 import "./index.css";
 import Login from "./Pages/Login.jsx";
 import BloodBankForm from "./Pages/BloodBankForm.jsx"
+import LiveRequest from "./Pages/LiveRequest.jsx";
+import PatientRequest from "./Pages/PatientRequest.jsx";  // ✅ Import PatientRequest Page
+import TrackRequest from "./Pages/TrackRequest.jsx";
+import BloodBankLanding from "./Pages/BloodBankLanding.jsx";
 
 function App() {
   return (
@@ -23,11 +27,14 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<BloodBankForm />} />
         <Route path="/request-blood" element={<RequestBlood />} />
-        <Route path="/request-blood" element={<RequestBlood />} />
         <Route path="/donate-blood" element={<DonateBlood />} />
+        <Route path="/donate-blood/live-requests" element={<LiveRequest />} />
+        <Route path="/patient-request" element={<PatientRequest />} />  {/* ✅ Route for Patient Request */}
+        <Route path="/track-request" element={<TrackRequest />} />
+        <Route path="/blood-bank" element={<BloodBankLanding />} />
       </Routes>
     </>
   );
 }
 
-export default App;
+export default App;

@@ -1,135 +1,154 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const DonateBlood = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    age: '',
-    bloodType: '',
-    location: '',
-  });
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        bloodType: "",
+        location: "",
+        age: "",
+        phone: ""
+    });
 
-  const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+    const [error, setError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+    const [token, setToken] = useState(null);
 
-  const navigate = useNavigate(); // Initialize useNavigate
+    useEffect(() => {
+        const storedToken = localStorage.getItem("token");
+        if (storedToken) {
+            setToken(storedToken);
+        } else {
+            setError("You must be logged in to donate blood.");
+        }
+    }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Make your API call here
-      await axios.post('/api/donate-blood', formData);
-      
-      alert('Blood donor information submitted successfully!');
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        setSuccessMessage("");
 
-      // After the successful form submission, redirect to live-requests
-      navigate('/donate-blood/live-requests');  // Redirect to the live requests page
-    } catch (error) {
-      alert('Error submitting donor information. Please try again.');
+        if (!token) {
+            setError("Unauthorized - Please log in first.");
+            return;
+        }
+
+        if (!formData.bloodType || !formData.location || !formData.age || !formData.phone) {
+            setError("All fields are required!");
+            return;
+        }
+
+        try {
+            console.log("Sending donor registration request with token:", token);
+
+            const response = await axios.post(
+                "http://localhost:3000/api/v2/register",
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    withCredentials: true
+                }
+            );
+
+            if (response.status === 201) {
+                setSuccessMessage("Donor profile created successfully!");
+                setTimeout(() => navigate("/live-requests"), 2000);
+            }
+        } catch (error) {
+            console.error("Error registering donor:", error.response?.data || error.message);
+            
+            // ✅ Instead of showing an error, redirect if user is already a donor
+            if (error.response?.data?.message === "User is already registered as a donor") {
+                navigate("/live-requests"); // 🔄 Auto-redirect
+            } else {
+                setError(error.response?.data?.message || "Failed to register as donor. Please try again.");
+            }
+        }
+    };
+
+    return (
+        <div style={styles.container}>
+            <h2 style={styles.title}>Donate Blood</h2>
+            {error && <p style={styles.error}>{error}</p>}
+            {successMessage && <p style={styles.success}>{successMessage}</p>}
+
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <select name="bloodType" value={formData.bloodType} onChange={handleChange} required style={styles.input}>
+                    <option value="">Select Blood Type</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+                <input type="text" name="location" value={formData.location} onChange={handleChange} placeholder="Location" required style={styles.input} />
+                <input type="number" name="age" value={formData.age} onChange={handleChange} placeholder="Age" required style={styles.input} />
+                <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" required style={styles.input} />
+                <button type="submit" style={styles.button}>Register as Donor</button>
+            </form>
+        </div>
+    );
+};
+
+const styles = {
+    container: {
+        maxWidth: "400px",
+        margin: "40px auto",
+        padding: "20px",
+        borderRadius: "8px",
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+        backgroundColor: "#fff",
+        textAlign: "center"
+    },
+    title: {
+        color: "#333",
+        fontSize: "24px",
+        marginBottom: "20px"
+    },
+    form: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px"
+    },
+    input: {
+        padding: "10px",
+        borderRadius: "5px",
+        border: "1px solid #ccc",
+        fontSize: "16px"
+    },
+    button: {
+        padding: "10px",
+        borderRadius: "5px",
+        border: "none",
+        backgroundColor: "#e63946",
+        color: "white",
+        fontSize: "16px",
+        cursor: "pointer",
+        marginTop: "10px"
+    },
+    error: {
+        color: "red",
+        fontSize: "14px",
+        marginBottom: "10px"
+    },
+    success: {
+        color: "green",
+        fontSize: "14px",
+        marginBottom: "10px"
     }
-  };
-
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
-        <h2 className="text-3xl font-bold text-red-700 mb-6 text-center">Donate Blood</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Full Name</label>
-            <input 
-              type="text" 
-              name="name" 
-              value={formData.name} 
-              onChange={handleChange} 
-              required 
-              className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-
-          {/* Email */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Email</label>
-            <input 
-              type="email" 
-              name="email" 
-              value={formData.email} 
-              onChange={handleChange} 
-              required
-              className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-
-          {/* Phone */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Phone</label>
-            <input 
-              type="tel" 
-              name="phone" 
-              value={formData.phone} 
-              onChange={handleChange} 
-              required
-              className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-
-          {/* Age */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Age</label>
-            <input 
-              type="number" 
-              name="age" 
-              value={formData.age} 
-              onChange={handleChange} 
-              required 
-              className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-
-          {/* Blood Type */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Blood Type</label>
-            <select 
-              name="bloodType" 
-              value={formData.bloodType} 
-              onChange={handleChange} 
-              required
-              className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-            >
-              <option value="" disabled>Select Blood Type</option>
-              {bloodTypes.map((type) => <option key={type} value={type}>{type}</option>)}
-            </select>
-          </div>
-
-          {/* Location */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Location</label>
-            <input 
-              type="text" 
-              name="location" 
-              value={formData.location} 
-              onChange={handleChange} 
-              required
-              className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-          </div>
-
-          {/* Submit Button */}
-          <button 
-            type="submit" 
-            className="w-full bg-red-600 hover:bg-red-800 text-white py-3 px-4 rounded-md text-lg font-semibold transition-all duration-300"
-          >
-            Submit as Donor
-          </button>
-        </form>
-      </div>
-    </div>
-  );
 };
 
 export default DonateBlood;
+

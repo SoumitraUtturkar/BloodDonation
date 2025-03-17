@@ -28,7 +28,7 @@ function App() {
         <Route path="/register" element={<BloodBankForm />} />
         <Route path="/request-blood" element={<RequestBlood />} />
         <Route path="/donate-blood" element={<DonateBlood />} />
-        <Route path="/donate-blood/live-requests" element={<LiveRequest />} />
+        <Route path="/live-requests" element={<LiveRequest />} />
         <Route path="/patient-request" element={<PatientRequest />} />  {/* ✅ Route for Patient Request */}
         <Route path="/track-request" element={<TrackRequest />} />
         <Route path="/blood-bank" element={<BloodBankLanding />} />

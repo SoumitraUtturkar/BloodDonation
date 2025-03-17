@@ -38,7 +38,7 @@ const Signup = () => {
       console.log(response.data);
 
       // Redirect to login page after 2 seconds
-      setTimeout(() => navigate("/"), 2000);
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
       setError(err.response?.data?.error || "Signup failed");
     }

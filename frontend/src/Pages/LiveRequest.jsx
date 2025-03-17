@@ -1,30 +1,56 @@
-import React, { useState } from "react";
-import RequestCard from "../Components/RequestCard"; // Import RequestCard component
-import Button from "../Components/Button";
+import { useEffect, useState } from "react";
+import RequestCard from "../Components/RequestCard";
 
 const DonateBlood = () => {
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
 
-  // Sample data (replace with API call or state)
-  const urgentRequests = [
-    { id: 1, name: "Aniruddha Patil", bloodGroup: "A+", location: "Pune", profilePhoto: "profile1.jpg" },
-    { id: 2, name: "Sujal Mehta", bloodGroup: "B-", location: "Mumbai", profilePhoto: "profile2.jpg" },
-  ];
+  // Fetch blood donation requests
+  const fetchRequests = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Unauthorized - Please log in first");
+      }
 
-  const normalRequests = [
-    { id: 3, name: "Onkar Joshi", bloodGroup: "O+", location: "Nagpur", profilePhoto: "profile3.jpg" },
-    { id: 4, name: "Amey Deshmukh", bloodGroup: "AB+", location: "Chennai", profilePhoto: "profile4.jpg" },
-  ];
+      const response = await fetch("http://localhost:3000/api/v2/requests", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: "include",
+      });
 
-  const filteredUrgentRequests = urgentRequests.filter((req) =>
-    req.name.toLowerCase().includes(search.toLowerCase()) ||
-    req.bloodGroup.toLowerCase().includes(search.toLowerCase()) ||
-    req.location.toLowerCase().includes(search.toLowerCase())
-  );
+      const contentType = response.headers.get("content-type");
+      if (!response.ok) {
+        throw new Error(`Server Error: ${response.status} - ${response.statusText}`);
+      }
 
-  const filteredNormalRequests = normalRequests.filter((req) =>
-    req.name.toLowerCase().includes(search.toLowerCase()) ||
-    req.bloodGroup.toLowerCase().includes(search.toLowerCase()) ||
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Invalid response format: Expected JSON but received HTML.");
+      }
+
+      const data = await response.json();
+      setRequests(data.requests);
+    } catch (err) {
+      console.error("Fetch error:", err.message);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  // Filter requests based on search input
+  const filteredRequests = requests.filter((req) =>
+    req.patient_name.toLowerCase().includes(search.toLowerCase()) ||
+    req.bloodType.toLowerCase().includes(search.toLowerCase()) ||
     req.location.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -45,36 +71,35 @@ const DonateBlood = () => {
         />
       </div>
 
-      {/* Urgent Blood Requests Section */}
-      <section className="bg-red-50 w-full py-16 flex flex-col items-center text-center rounded-lg shadow-lg">
-        <h2 className="text-4xl font-bold text-red-700 mb-6">Urgent Blood Requests</h2>
-        <p className="text-lg text-gray-700 max-w-2xl mb-8">
-          These are the most urgent blood requests that need your immediate attention. Help save a life today!
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {filteredUrgentRequests.length > 0 ? (
-            filteredUrgentRequests.map((req) => (
-              <RequestCard key={req.id} {...req} />
-            ))
-          ) : (
-            <p className="text-gray-500 text-center col-span-3">No matching urgent requests found.</p>
-          )}
-        </div>
-      </section>
+      {/* Display Loading or Error Messages */}
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
 
-      {/* Normal Blood Requests Section */}
-      <section className="bg-yellow-50 w-full py-16 flex flex-col items-center text-center rounded-lg shadow-lg mt-16">
-        <h2 className="text-4xl font-bold text-yellow-700 mb-6">Normal Blood Requests</h2>
+      {/* Blood Requests Section */}
+      <section className="w-full py-16 flex flex-col items-center text-center rounded-lg shadow-lg bg-gray-50">
+        <h2 className="text-4xl font-bold text-red-700 mb-6">Blood Donation Requests</h2>
         <p className="text-lg text-gray-700 max-w-2xl mb-8">
-          These blood requests are important but not as urgent. Your contribution can still make a significant difference.
+          These are the active blood requests. Help save a life today!
         </p>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {filteredNormalRequests.length > 0 ? (
-            filteredNormalRequests.map((req) => (
-              <RequestCard key={req.id} {...req} />
+          {filteredRequests.length > 0 ? (
+            filteredRequests.map((req) => (
+              <RequestCard
+                key={req._id}
+                name={req.patient_name}
+                guardian={req.guardian_name}
+                bloodGroup={req.bloodType}
+                location={req.location}
+                phone={req.phone}
+                email={req.email}
+                hospital={req.hospital}
+                photo={req.photo}
+                createdAt={req.createdAt}
+              />
             ))
           ) : (
-            <p className="text-gray-500 text-center col-span-3">No matching normal requests found.</p>
+            <p className="text-gray-500 text-center col-span-3">No matching requests found.</p>
           )}
         </div>
       </section>
@@ -103,7 +128,6 @@ const DonateBlood = () => {
               Donate Here
             </button>
           </div>
-          {/* Repeat for other blood banks */}
         </div>
       </section>
     </div>
@@ -111,3 +135,10 @@ const DonateBlood = () => {
 };
 
 export default DonateBlood;
+
+
+
+
+
+
+

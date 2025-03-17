@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "../Components/Button";
-import Cards from "../Components/Cards";
+import Cards from "../Components/Card";
 import AboutUs from "../Components/about";// Import About Us component
 import ContactUs from "../Components/Contact";
 

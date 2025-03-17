@@ -1,10 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/RaktVahini_Logo.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login"); // Redirect to login after logout
+  };
 
   const handleNavigation = (sectionId) => {
     setIsOpen(false);
@@ -59,18 +74,32 @@ const Navbar = () => {
           </li>
         </ul>
 
-        {/* Login & Signup Buttons */}
-        <div className="hidden md:flex space-x-4">
-          <Link to="/login">
-            <button className="w-28 h-10 bg-white text-red-600 font-semibold rounded-md shadow-md hover:bg-gray-200 transition duration-300">
-              Login
-            </button>
-          </Link>
-          <Link to="/signup">
-            <button className="w-28 h-10 bg-white text-red-600 font-semibold rounded-md shadow-md hover:bg-gray-200 transition duration-300">
-              Sign Up
-            </button>
-          </Link>
+        {/* Login & Signup OR User Info & Logout */}
+        <div className="hidden md:flex space-x-4 items-center">
+          {user ? (
+            <>
+              <span className="text-white font-semibold">Hello, {user.name}!</span>
+              <button
+                onClick={handleLogout}
+                className="w-28 h-10 bg-white text-red-600 font-semibold rounded-md shadow-md hover:bg-gray-200 transition duration-300"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">
+                <button className="w-28 h-10 bg-white text-red-600 font-semibold rounded-md shadow-md hover:bg-gray-200 transition duration-300">
+                  Login
+                </button>
+              </Link>
+              <Link to="/signup">
+                <button className="w-28 h-10 bg-white text-red-600 font-semibold rounded-md shadow-md hover:bg-gray-200 transition duration-300">
+                  Sign Up
+                </button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -94,18 +123,29 @@ const Navbar = () => {
           >
             Contact
           </button>
-          <Link
-            to="/login"
-            className="block w-full text-left hover:text-gray-300"
-          >
-            Login
-          </Link>
-          <Link
-            to="/signup"
-            className="block w-full text-left hover:text-gray-300"
-          >
-            Sign Up
-          </Link>
+
+          {user ? (
+            <>
+              <span className="block w-full text-left text-white font-semibold">
+                Hello, {user.name}!
+              </span>
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left hover:text-gray-300"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="block w-full text-left hover:text-gray-300">
+                Login
+              </Link>
+              <Link to="/signup" className="block w-full text-left hover:text-gray-300">
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
       )}
     </nav>
@@ -113,5 +153,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 
 

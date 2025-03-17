@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import axios from "axios";
 
 const RequestBlood = () => {
+    const navigate = useNavigate(); // Initialize navigation
     const [formData, setFormData] = useState({
         patient_name: "",
         guardian_name: "",
@@ -10,14 +12,13 @@ const RequestBlood = () => {
         bloodType: "",
         hospital: "",
         location: "",
-        photo: "" // Now storing as a URL string
+        photo: ""
     });
 
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [token, setToken] = useState(null);
 
-    // Fetch token from localStorage on component mount
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
         if (storedToken) {
@@ -27,25 +28,21 @@ const RequestBlood = () => {
         }
     }, []);
 
-    // Handle form input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
         setSuccessMessage("");
 
-        // Check if token is available
         if (!token) {
             setError("Unauthorized - Please log in first.");
             return;
         }
 
-        // Validation Check
         if (!formData.patient_name || !formData.guardian_name || !formData.phone ||
             !formData.bloodType || !formData.hospital || !formData.location) {
             setError("All fields are required!");
@@ -53,32 +50,23 @@ const RequestBlood = () => {
         }
 
         try {
-            console.log("Sending request with token:", token); // Debugging
+            console.log("Sending request with token:", token);
 
             const response = await axios.post(
-                "http://localhost:3000/api/v3/post", // Ensure backend URL is correct
+                "http://localhost:3000/api/v3/post",
                 formData,
                 {
                     headers: { 
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}` // Ensure "Bearer " prefix
+                        Authorization: `Bearer ${token}`
                     },
-                    withCredentials: true // Ensures cookies (JWT) are sent with request
+                    withCredentials: true
                 }
             );
 
             if (response.status === 201) {
                 setSuccessMessage("Blood request submitted successfully!");
-                setFormData({
-                    patient_name: "",
-                    guardian_name: "",
-                    email: "",
-                    phone: "",
-                    bloodType: "",
-                    hospital: "",
-                    location: "",
-                    photo: ""
-                });
+                setTimeout(() => navigate("/patient-request"), 2000); // Redirect after 2 sec
             }
         } catch (error) {
             console.error("Error submitting request:", error.response?.data || error.message);
@@ -113,8 +101,6 @@ const RequestBlood = () => {
 
                 <input type="text" name="hospital" value={formData.hospital} onChange={handleChange} placeholder="Hospital Name" required style={styles.input} />
                 <input type="text" name="location" value={formData.location} onChange={handleChange} placeholder="Location" required style={styles.input} />
-
-                {/* Changed File Upload to Text Input for Photo URL */}
                 <input type="text" name="photo" value={formData.photo} onChange={handleChange} placeholder="Photo URL (optional)" style={styles.input} />
 
                 <button type="submit" style={styles.button}>Submit Request</button>
@@ -123,7 +109,6 @@ const RequestBlood = () => {
     );
 };
 
-// Basic Styling
 const styles = {
     container: {
         maxWidth: "400px",
@@ -173,3 +158,4 @@ const styles = {
 };
 
 export default RequestBlood;
+

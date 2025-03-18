@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -23,21 +25,10 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(
-        "/api/v1/login",
-        formData,
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      // ✅ Store token & user data in localStorage
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      const response = await axios.post("/api/v1/login", formData);
+      login(response.data.user, response.data.token);
 
       setSuccessMessage(`Welcome, ${response.data.user.name}! Redirecting...`);
-
       setTimeout(() => navigate("/"), 1000);
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
@@ -74,12 +65,12 @@ const Login = () => {
         <button type="submit" className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700">
           Login
         </button>
+        <p className="text-center mt-4">
+          Don't have an account? <Link to="/signup" className="text-red-600">Sign Up</Link>
+        </p>
       </form>
     </div>
   );
 };
 
 export default Login;
-
-
-

@@ -107,6 +107,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import PatientRequestCard from "../Components/PatientCard"; // Import the card you created
 
 const PatientRequests = () => {
   const navigate = useNavigate();
@@ -163,111 +164,37 @@ const PatientRequests = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Your Blood Requests</h2>
+    <div className="max-w-5xl mx-auto py-8 px-4 bg-gray-50 min-h-screen">
+      <h2 className="text-3xl font-semibold text-center mb-8 text-red-600">Your Blood Requests</h2>
+
       {loading ? (
-        <p>Loading...</p>
+        <p className="text-center text-gray-600">Loading...</p>
       ) : error ? (
-        <div>
-          <p style={{ color: "red" }}>{error}</p>
-          <button onClick={() => window.location.reload()} style={styles.retryButton}>
+        <div className="text-center">
+          <p className="text-red-500">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+          >
             Try Again
           </button>
         </div>
       ) : requests.length > 0 ? (
-        <ul style={styles.list}>
+        <div className="grid gap-6">
           {requests.map((request) => (
-            <li key={request._id} style={styles.listItem}>
-              <div style={styles.requestDetails}>
-                <p><strong>Patient Name:</strong> {request.patient_name}</p>
-                <p><strong>Guardian Name:</strong> {request.guardian_name}</p>
-                <p><strong>Email:</strong> {request.email}</p>
-                <p><strong>Phone:</strong> {request.phone}</p>
-                <p><strong>Blood Type:</strong> {request.bloodType}</p>
-                <p><strong>Hospital:</strong> {request.hospital}</p>
-                <p><strong>Location:</strong> {request.location}</p>
-                {request.photo && <img src={request.photo} alt="Patient" style={styles.photo} />}
-              </div>
-              <div style={styles.buttonContainer}>
-                <button onClick={() => navigate(`/edit-request/${request._id}`)} style={styles.modifyButton}>
-                  Modify
-                </button>
-                <button onClick={() => handleDelete(request._id)} style={styles.deleteButton}>
-                  Delete
-                </button>
-              </div>
-            </li>
+            <PatientRequestCard
+              key={request._id}
+              request={request}
+              handleDelete={handleDelete}
+            />
           ))}
-        </ul>
+        </div>
       ) : (
-        <p>No blood requests found.</p>
+        <p className="text-center text-gray-600">No blood requests found.</p>
       )}
     </div>
   );
 };
 
-const styles = {
-  container: {
-    maxWidth: "800px",
-    margin: "20px auto",
-    padding: "20px",
-    borderRadius: "8px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    backgroundColor: "#f9f9f9",
-  },
-  title: {
-    textAlign: "center",
-    marginBottom: "20px",
-  },
-  list: {
-    listStyle: "none",
-    padding: 0,
-  },
-  listItem: {
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-    padding: "15px",
-    marginBottom: "10px",
-    backgroundColor: "white",
-  },
-  requestDetails: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  photo: {
-    maxWidth: "150px",
-    marginTop: "10px",
-    borderRadius: "4px",
-  },
-  buttonContainer: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginTop: "10px",
-  },
-  modifyButton: {
-    backgroundColor: "#4CAF50",
-    color: "white",
-    padding: "10px 15px",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  deleteButton: {
-    backgroundColor: "#ff4d4d",
-    color: "white",
-    padding: "10px 15px",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  retryButton: {
-    backgroundColor: "#ff9800",
-    color: "white",
-    padding: "10px 15px",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-};
-
 export default PatientRequests;
+

@@ -14,6 +14,7 @@ import LiveRequest from "./Pages/LiveRequest.jsx";
 import PatientRequest from "./Pages/PatientRequest.jsx";  // ✅ Import PatientRequest Page
 import TrackRequest from "./Pages/TrackRequest.jsx";
 import BloodBankLanding from "./Pages/BloodBankLanding.jsx";
+import TrackRequestDonor from "./Pages/TrackRequestDonor.jsx";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/patient-request" element={<PatientRequest />} />  {/* ✅ Route for Patient Request */}
         <Route path="/track-request" element={<TrackRequest />} />
         <Route path="/blood-bank" element={<BloodBankLanding />} />
+        <Route path="/request-donor-track" element={<TrackRequestDonor/>}/>
       </Routes>
     </>
   );

@@ -2,7 +2,8 @@ const express = require("express");
 const {
     createRequest,
     updateRequest,
-    deleteRequest
+    deleteRequest,
+    getUserRequests
 } = require("../controllers/patientController");
 const protectRoute = require("../middlewares/auth"); //   Ensure authentication middleware is correctly imported
 
@@ -10,6 +11,7 @@ const router = express.Router();
 
 //   Route: Patient posts a blood request
 router.post("/post", protectRoute, createRequest);
+router.get("/request", protectRoute, getUserRequests);
 
 //   Route: Update a blood request (Only request creator can update)
 router.put("/update/:id", protectRoute, updateRequest);

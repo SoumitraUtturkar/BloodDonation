@@ -85,3 +85,24 @@ exports.updateRequest = async (req, res) => {
         res.status(500).json({ message: "Internal server error", error });
     }
 };
+
+
+
+// Get All Requests Created by the Logged-in User
+exports.getUserRequests = async (req, res) => {
+    try {
+        const userEmail = req.user.email; // Get email from authenticated user
+
+        // Find all requests created by this user
+        const requests = await BloodRequest.find({ email: userEmail }).sort({ createdAt: -1 });
+
+        if (!requests.length) {
+            return res.status(404).json({ message: "No blood requests found for this user" });
+        }
+
+        res.status(200).json({ success: true, requests });
+    } catch (error) {
+        console.error("Error fetching user blood requests:", error);
+        res.status(500).json({ message: "Internal server error", error });
+    }
+};

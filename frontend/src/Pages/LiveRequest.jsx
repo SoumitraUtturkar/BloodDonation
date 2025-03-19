@@ -7,7 +7,7 @@ const DonateBlood = () => {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
 
-  // Fetch blood donation requests
+  // Fetch blood donation requests from the backend
   const fetchRequests = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -15,7 +15,7 @@ const DonateBlood = () => {
         throw new Error("Unauthorized - Please log in first");
       }
 
-      const response = await fetch("http://localhost:3000/api/v2/requests", {
+      const response = await fetch("/api/v4/all", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -28,7 +28,11 @@ const DonateBlood = () => {
       }
 
       const data = await response.json();
-      setRequests(data.requests);
+      if (data.success && data.bloodRequests) {
+        setRequests(data.bloodRequests); // Ensure bloodRequests exist before setting state
+      } else {
+        throw new Error("Failed to fetch blood requests.");
+      }
     } catch (err) {
       console.error("Fetch error:", err.message);
       setError(err.message);
@@ -42,11 +46,16 @@ const DonateBlood = () => {
   }, []);
 
   // Filter requests based on search input
-  const filteredRequests = requests.filter((req) =>
-    req.patient_name.toLowerCase().includes(search.toLowerCase()) ||
-    req.bloodType.toLowerCase().includes(search.toLowerCase()) ||
-    req.location.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredRequests = requests.filter((req) => {
+    const patient = req.patientId; // Ensure patientId exists before accessing fields
+    return (
+      patient?.name?.toLowerCase().includes(search.toLowerCase()) ||
+      patient?.bloodType?.toLowerCase().includes(search.toLowerCase()) ||
+      patient?.location?.toLowerCase().includes(search.toLowerCase()) ||
+      patient?.hospital?.toLowerCase().includes(search.toLowerCase()) ||
+      patient?.urgency?.toLowerCase().includes(search.toLowerCase())
+    );
+  });
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center p-8 space-y-16">
@@ -54,7 +63,7 @@ const DonateBlood = () => {
 
       <input
         type="text"
-        placeholder="Search by name, blood group, or location..."
+        placeholder="Search by name, blood type, location, hospital, or urgency..."
         className="w-full max-w-4xl px-6 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -66,7 +75,7 @@ const DonateBlood = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 max-w-6xl mx-auto">
         {filteredRequests.length > 0 ? (
           filteredRequests.map((req) => (
-            <RequestCard key={req._id} {...req} />
+            <RequestCard key={req._id} request={req} />
           ))
         ) : (
           <p className="text-gray-500 text-center col-span-3">No matching requests found.</p>

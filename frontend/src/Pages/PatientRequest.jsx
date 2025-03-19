@@ -107,16 +107,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import PatientRequestCard from "../Components/PatientCard"; // Import the card you created
+import PatientRequestCard from "../Components/PatientCard"; // Ensure correct import
+
+const API_BASE_URL = "/api/v3"; // Define API base URL
 
 const PatientRequests = () => {
   const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
+  const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchRequests = async () => {
+    const fetchPatientDetails = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -125,36 +128,34 @@ const PatientRequests = () => {
           return;
         }
 
-        const response = await axios.get("http://localhost:3000/api/v3/request", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        // Fetch patient details
+        const response = await axios.get(`${API_BASE_URL}/details`, {
+          headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
 
         if (response.data.success) {
-          setRequests(response.data.requests);
+          setPatient(response.data.patient);
+          setRequests(response.data.patient.requests || []);
         } else {
-          setError(response.data.message || "Failed to fetch requests.");
+          setError(response.data.message || "Failed to fetch patient details.");
         }
       } catch (err) {
-        setError(err.response?.data?.message || "An error occurred while fetching requests.");
+        setError(err.response?.data?.message || "An error occurred while fetching data.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRequests();
+    fetchPatientDetails();
   }, []);
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this request?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:3000/api/v3/request/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        await axios.delete(`${API_BASE_URL}/request/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
         setRequests(requests.filter((request) => request._id !== id));
       } catch (err) {
@@ -167,6 +168,7 @@ const PatientRequests = () => {
     <div className="max-w-5xl mx-auto py-8 px-4 bg-gray-50 min-h-screen">
       <h2 className="text-3xl font-semibold text-center mb-8 text-red-600">Your Blood Requests</h2>
 
+      {/* Loading & Error Handling */}
       {loading ? (
         <p className="text-center text-gray-600">Loading...</p>
       ) : error ? (
@@ -174,27 +176,49 @@ const PatientRequests = () => {
           <p className="text-red-500">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 px-6 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition"
+            className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-semibold shadow-lg"
           >
             Try Again
           </button>
         </div>
-      ) : requests.length > 0 ? (
-        <div className="grid gap-6">
-          {requests.map((request) => (
-            <PatientRequestCard
-              key={request._id}
-              request={request}
-              handleDelete={handleDelete}
-            />
-          ))}
-        </div>
       ) : (
-        <p className="text-center text-gray-600">No blood requests found.</p>
+        <>
+          {/* Display Patient Details */}
+          {patient && (
+            <div className="bg-white shadow-md rounded-lg p-6 mb-6">
+              <h3 className="text-2xl font-semibold text-gray-800 text-center">Patient Details</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-gray-700">
+                <p><strong>Name:</strong> {patient.name}</p>
+                <p><strong>Blood Type:</strong> {patient.bloodType}</p>
+                <p><strong>Age:</strong> {patient.age}</p>
+                <p><strong>Gender:</strong> {patient.gender}</p>
+                <p><strong>Phone:</strong> {patient.phone}</p>
+                <p><strong>Email:</strong> {patient.email}</p>
+                <p><strong>Address:</strong> {patient.address}</p>
+                <p><strong>Previous Donors:</strong> {patient.previousDonors?.length || 0}</p>
+                <p><strong>Medical History:</strong> {patient.medicalHistory || "Not Available"}</p>
+                <p><strong>Last Donation Date:</strong> {patient.lastDonationDate || "Not Available"}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Display Requests */}
+          {requests.length > 0 ? (
+            <div className="grid gap-6">
+              {requests.map((request) => (
+                <PatientRequestCard key={request._id} request={request} handleDelete={handleDelete} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-600">No blood requests found.</p>
+          )}
+        </>
       )}
     </div>
   );
 };
 
 export default PatientRequests;
+
+
 

@@ -10,12 +10,12 @@ app.use(cookieParser());
 dbConnect();
 
 app.use(express.json())
-// app.use(express.urlencoded({ extended: true }));
-// app.use(cors()); // Allow frontend to communicate with backend
-// app.use(cors({
-//     origin: "http://localhost:5173", // Allow frontend to make requests
-//     credentials: true // Allow cookies
-//   }));
+app.use(express.urlencoded({ extended: true }));
+app.use(cors()); // Allow frontend to communicate with backend
+app.use(cors({
+    origin: "http://localhost:5173", // Allow frontend to make requests
+    credentials: true // Allow cookies
+  }));
 const PORT = process.env.PORT || 5173
 const user = require("./routes/authRoute");
 const patient = require("./routes/patientRoute");

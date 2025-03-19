@@ -1,163 +1,3 @@
-// import { useState, useEffect } from "react";
-// import { useNavigate } from "react-router-dom"; // Import useNavigate
-// import axios from "axios";
-
-// const RequestBlood = () => {
-//     const navigate = useNavigate(); // Initialize navigation
-//     const [formData, setFormData] = useState({
-//         patient_name: "",
-//         guardian_name: "",
-//         email: "",
-//         phone: "",
-//         bloodType: "",
-//         hospital: "",
-//         location: "",
-//         photo: ""
-//     });
-
-//     const [error, setError] = useState("");
-//     const [successMessage, setSuccessMessage] = useState("");
-//     const [token, setToken] = useState(null);
-
-//     useEffect(() => {
-//         const storedToken = localStorage.getItem("token");
-//         if (storedToken) {
-//             setToken(storedToken);
-//         } else {
-//             setError("You must be logged in to request blood.");
-//         }
-//     }, []);
-
-//     const handleChange = (e) => {
-//         const { name, value } = e.target;
-//         setFormData({ ...formData, [name]: value });
-//     };
-
-//     const handleSubmit = async (e) => {
-//         e.preventDefault();
-//         setError("");
-//         setSuccessMessage("");
-
-//         if (!token) {
-//             setError("Unauthorized - Please log in first.");
-//             return;
-//         }
-
-//         if (!formData.patient_name || !formData.guardian_name || !formData.phone ||
-//             !formData.bloodType || !formData.hospital || !formData.location) {
-//             setError("All fields are required!");
-//             return;
-//         }
-
-//         try {
-//             console.log("Sending request with token:", token);
-
-//             const response = await axios.post(
-//                 "http://localhost:3000/api/v3/post",
-//                 formData,
-//                 {
-//                     headers: { 
-//                         "Content-Type": "application/json",
-//                         Authorization: `Bearer ${token}`
-//                     },
-//                     withCredentials: true
-//                 }
-//             );
-
-//             if (response.status === 201) {
-//                 setSuccessMessage("Blood request submitted successfully!");
-//                 setTimeout(() => navigate("/patient-request"), 2000); // Redirect after 2 sec
-//             }
-//         } catch (error) {
-//             console.error("Error submitting request:", error.response?.data || error.message);
-//             setError(error.response?.data?.message || "Failed to submit request. Please try again.");
-//         }
-//     };
-
-//     return (
-//         <div style={styles.container}>
-//             <h2 style={styles.title}>Request Blood</h2>
-            
-//             {error && <p style={styles.error}>{error}</p>}
-//             {successMessage && <p style={styles.success}>{successMessage}</p>}
-
-//             <form onSubmit={handleSubmit} style={styles.form}>
-//                 <input type="text" name="patient_name" value={formData.patient_name} onChange={handleChange} placeholder="Patient Name" required style={styles.input} />
-//                 <input type="text" name="guardian_name" value={formData.guardian_name} onChange={handleChange} placeholder="Guardian Name" required style={styles.input} />
-//                 <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" required style={styles.input} />
-//                 <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" required style={styles.input} />
-                
-//                 <select name="bloodType" value={formData.bloodType} onChange={handleChange} required style={styles.input}>
-//                     <option value="">Select Blood Type</option>
-//                     <option value="A+">A+</option>
-//                     <option value="A-">A-</option>
-//                     <option value="B+">B+</option>
-//                     <option value="B-">B-</option>
-//                     <option value="O+">O+</option>
-//                     <option value="O-">O-</option>
-//                     <option value="AB+">AB+</option>
-//                     <option value="AB-">AB-</option>
-//                 </select>
-
-//                 <input type="text" name="hospital" value={formData.hospital} onChange={handleChange} placeholder="Hospital Name" required style={styles.input} />
-//                 <input type="text" name="location" value={formData.location} onChange={handleChange} placeholder="Location" required style={styles.input} />
-//                 <input type="text" name="photo" value={formData.photo} onChange={handleChange} placeholder="Photo URL (optional)" style={styles.input} />
-
-//                 <button type="submit" style={styles.button}>Submit Request</button>
-//             </form>
-//         </div>
-//     );
-// };
-
-// const styles = {
-//     container: {
-//         maxWidth: "400px",
-//         margin: "40px auto",
-//         padding: "20px",
-//         borderRadius: "8px",
-//         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-//         backgroundColor: "#fff",
-//         textAlign: "center"
-//     },
-//     title: {
-//         color: "#333",
-//         fontSize: "24px",
-//         marginBottom: "20px"
-//     },
-//     form: {
-//         display: "flex",
-//         flexDirection: "column",
-//         gap: "10px"
-//     },
-//     input: {
-//         padding: "10px",
-//         borderRadius: "5px",
-//         border: "1px solid #ccc",
-//         fontSize: "16px"
-//     },
-//     button: {
-//         padding: "10px",
-//         borderRadius: "5px",
-//         border: "none",
-//         backgroundColor: "#e63946",
-//         color: "white",
-//         fontSize: "16px",
-//         cursor: "pointer",
-//         marginTop: "10px"
-//     },
-//     error: {
-//         color: "red",
-//         fontSize: "14px",
-//         marginBottom: "10px"
-//     },
-//     success: {
-//         color: "green",
-//         fontSize: "14px",
-//         marginBottom: "10px"
-//     }
-// };
-
-// export default RequestBlood;
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -166,14 +6,13 @@ import axios from "axios";
 const RequestBlood = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        patient_name: "",
-        guardian_name: "",
-        email: "",
-        phone: "",
         bloodType: "",
         hospital: "",
         location: "",
-        photo: ""
+        urgency: "",
+        age: "",
+        gender: "",
+        contactNumber: "",
     });
 
     const [error, setError] = useState("");
@@ -204,20 +43,19 @@ const RequestBlood = () => {
             return;
         }
 
-        if (!formData.patient_name || !formData.guardian_name || !formData.phone ||
-            !formData.bloodType || !formData.hospital || !formData.location) {
+        if (!formData.bloodType || !formData.hospital || !formData.location ||
+            !formData.urgency || !formData.age || !formData.gender || !formData.contactNumber) {
             setError("All fields are required!");
             return;
         }
 
         try {
-            console.log("Sending request with token:", token);
-
-            const response = await axios.post(
-                "http://localhost:3000/api/v3/post",
+            // **Step 1:** Register or Retrieve Patient (`/api/v3/create`)
+            const patientResponse = await axios.post(
+                "/api/v3/create",
                 formData,
                 {
-                    headers: {
+                    headers: { 
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`
                     },
@@ -225,34 +63,48 @@ const RequestBlood = () => {
                 }
             );
 
-            if (response.status === 201) {
-                setSuccessMessage("Blood request submitted successfully!");
-                setTimeout(() => navigate("/patient-request"), 2000);
+            console.log("Patient Response:", patientResponse.data); // ✅ Debugging
+
+            if (patientResponse.status === 201) {
+                const patientId = patientResponse.data.patient?._id; // ✅ Extracting correct ID
+
+                if (!patientId) {
+                    setError("Error: Patient ID is missing.");
+                    return;
+                }
+
+                // **Step 2:** Create Blood Request (`/api/v4/create`)
+                const bloodRequestResponse = await axios.post(
+                    "/api/v4/create",
+                    { patientId },
+                    {
+                        headers: { 
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`
+                        },
+                        withCredentials: true
+                    }
+                );
+
+                if (bloodRequestResponse.status === 201) {
+                    setSuccessMessage("Blood request created successfully!");
+                    setTimeout(() => navigate("/patient-dashboard"), 2000); // Redirect after 2 sec
+                }
             }
         } catch (error) {
-            console.error("Error submitting request:", error.response?.data || error.message);
-            // ✅ Instead of showing an error, redirect if user is already a donor
-            if (error.response?.data?.message === "User is already registered as a donor") {
-                navigate("/patient-requests"); // 🔄 Auto-redirect
-            } else {
-                setError(error.response?.data?.message || "Failed to submit request. Please try again.");
-            }
+            console.error("Error:", error.response?.data || error.message);
+            setError(error.response?.data?.message || "Failed to process request. Please try again.");
         }
     };
 
     return (
         <div style={styles.container}>
-            <h2 style={styles.title}>Request Blood</h2>
-
+            <h2 style={styles.title}>Register as a Patient</h2>
+            
             {error && <p style={styles.error}>{error}</p>}
             {successMessage && <p style={styles.success}>{successMessage}</p>}
 
             <form onSubmit={handleSubmit} style={styles.form}>
-                <input type="text" name="patient_name" value={formData.patient_name} onChange={handleChange} placeholder="Patient Name" required style={styles.input} />
-                <input type="text" name="guardian_name" value={formData.guardian_name} onChange={handleChange} placeholder="Guardian Name" required style={styles.input} />
-                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" required style={styles.input} />
-                <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" required style={styles.input} />
-
                 <select name="bloodType" value={formData.bloodType} onChange={handleChange} required style={styles.input}>
                     <option value="">Select Blood Type</option>
                     <option value="A+">A+</option>
@@ -267,7 +119,24 @@ const RequestBlood = () => {
 
                 <input type="text" name="hospital" value={formData.hospital} onChange={handleChange} placeholder="Hospital Name" required style={styles.input} />
                 <input type="text" name="location" value={formData.location} onChange={handleChange} placeholder="Location" required style={styles.input} />
-                <input type="text" name="photo" value={formData.photo} onChange={handleChange} placeholder="Photo URL (optional)" style={styles.input} />
+                
+                <select name="urgency" value={formData.urgency} onChange={handleChange} required style={styles.input}>
+                    <option value="">Select Urgency</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+                
+                <input type="number" name="age" value={formData.age} onChange={handleChange} placeholder="Age" required style={styles.input} />
+                
+                <select name="gender" value={formData.gender} onChange={handleChange} required style={styles.input}>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <input type="text" name="contactNumber" value={formData.contactNumber} onChange={handleChange} placeholder="Contact Number" required style={styles.input} />
 
                 <button type="submit" style={styles.button}>Submit Request</button>
             </form>
@@ -324,3 +193,4 @@ const styles = {
 };
 
 export default RequestBlood;
+

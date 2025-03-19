@@ -8,7 +8,8 @@ const DonateBlood = () => {
         bloodType: "",
         location: "",
         age: "",
-        phone: ""
+        phone: "",
+        gender: ""
     });
 
     const [error, setError] = useState("");
@@ -39,17 +40,21 @@ const DonateBlood = () => {
             return;
         }
 
-        if (!formData.bloodType || !formData.location || !formData.age || !formData.phone) {
+        if (!formData.bloodType || !formData.location || !formData.age || !formData.phone || !formData.gender) {
             setError("All fields are required!");
             return;
         }
 
         try {
-            console.log("Sending donor registration request with token:", token);
-
             const response = await axios.post(
-                "http://localhost:3000/api/v2/register",
-                formData,
+                "/api/v2/create", // Updated API endpoint
+                {
+                    bloodType: formData.bloodType,
+                    location: formData.location,
+                    age: formData.age,
+                    contactNumber: formData.phone, // Matching backend key
+                    gender: formData.gender
+                },
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -66,9 +71,8 @@ const DonateBlood = () => {
         } catch (error) {
             console.error("Error registering donor:", error.response?.data || error.message);
             
-            // ✅ Instead of showing an error, redirect if user is already a donor
-            if (error.response?.data?.message === "User is already registered as a donor") {
-                navigate("/live-requests"); // 🔄 Auto-redirect
+            if (error.response?.data?.message === "You are already registered as a donor.") {
+                navigate("/live-requests"); // Auto-redirect existing donors
             } else {
                 setError(error.response?.data?.message || "Failed to register as donor. Please try again.");
             }
@@ -96,6 +100,12 @@ const DonateBlood = () => {
                 <input type="text" name="location" value={formData.location} onChange={handleChange} placeholder="Location" required style={styles.input} />
                 <input type="number" name="age" value={formData.age} onChange={handleChange} placeholder="Age" required style={styles.input} />
                 <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone Number" required style={styles.input} />
+                <select name="gender" value={formData.gender} onChange={handleChange} required style={styles.input}>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
                 <button type="submit" style={styles.button}>Register as Donor</button>
             </form>
         </div>
@@ -151,4 +161,3 @@ const styles = {
 };
 
 export default DonateBlood;
-

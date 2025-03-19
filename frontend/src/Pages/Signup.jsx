@@ -9,6 +9,7 @@ const Signup = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    accountType: "user", // Default role
   });
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -33,12 +34,13 @@ const Signup = () => {
     try {
       const response = await axios.post("/api/v1/signup", formData, {
         headers: { "Content-Type": "application/json" },
+        withCredentials: true, // Allow cookies for authentication
       });
 
       setSuccessMessage("Signup successful! Redirecting to login...");
       setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
-      setError(err.response?.data?.error || "Signup failed");
+      setError(err.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);
     }
@@ -89,6 +91,18 @@ const Signup = () => {
             onChange={handleChange}
             required
           />
+
+          {/* <select
+            name="accountType"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+            value={formData.accountType}
+            onChange={handleChange}
+          >
+            <option value="user">User</option>
+            <option value="patient">Patient</option>
+            <option value="donor">Donor</option>
+          </select> */}
+
           <button
             type="submit"
             className={`w-full p-3 text-white rounded-lg ${loading ? "bg-gray-400" : "bg-red-600 hover:bg-red-700"}`}
@@ -110,3 +124,5 @@ const Signup = () => {
 };
 
 export default Signup;
+
+

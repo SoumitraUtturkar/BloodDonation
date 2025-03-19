@@ -49,7 +49,7 @@ exports.signup = async (req, res) => {
       contactNumber,
       password: hashedPassword,
       accountType,
-      additionalDetails: profileDetails._id,
+      
     });
 
     res.status(201).json({ success: true, user, message: "User registered successfully" });

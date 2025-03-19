@@ -20,12 +20,12 @@ const PORT = process.env.PORT || 5173
 const user = require("./routes/authRoute");
 const patient = require("./routes/patientRoute");
 const Donor = require('./routes/donorRoute');
-// const bloodbank = require('./routes/bloodbankRoutes');
+const bloodRequest = require('./routes/bloodRequestRoute');
 //routes
 app.use("/api/v1", user);
  app.use("/api/v2", Donor);
  app.use("/api/v3", patient);
-// app.use("/api/v4", bloodbank);
+ app.use("/api/v4", bloodRequest);
 
 
 

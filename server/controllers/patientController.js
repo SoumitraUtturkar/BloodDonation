@@ -1,108 +1,134 @@
-const BloodRequest = require("../models/Patient");
+const mongoose = require("mongoose");
+const Patient = require("../models/Patient");
+const User = require("../models/User");
 
-//   Create a Blood Request
-exports.createRequest = async (req, res) => {
-    try {
-        const { patient_name, guardian_name, email, phone, bloodType, hospital, location, photo } = req.body;
+// ✅ Create a New Patient and Set Account Type to 'patient'
+exports.createPatient = async (req, res) => {
+  try {
+    const { bloodType, hospital, location, urgency, contactNumber,age,gender } = req.body;
+    const userId = req.user.id;
 
-        if (!guardian_name || !phone || !bloodType || !hospital || !location) {
-            return res.status(400).json({ message: "All fields are required" });
-        }
+    // Check if the user is already registered as a patient
+    const existingPatient = await Patient.findOne({ userId });
+    if (existingPatient) {
+      return res.status(400).json({ success: false, message: "You are already registered as a patient." });
+    }
 
-        const newRequest = new BloodRequest({
-            patient_name,
-            guardian_name,
-            email,
-            phone,
-            bloodType,
-            hospital,
-            location,
-            photo,
+    // Check if the user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    // Update accountType to 'patient'
+    user.accountType = "patient";
+    await user.save();
+     const profileDetails = await Profile.create({
+          gender: gender, 
+          contactNumber: contactNumber ,
         });
 
-        await newRequest.save();
-        res.status(201).json({ message: "Blood request created successfully", request: newRequest });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error });
-    }
+    // Create a new patient
+    const newPatient = new Patient({
+      userId,
+      name:user.name,
+      email: user.email,
+      bloodType,
+      hospital,
+      location,
+      urgency,
+      age,
+      contactNumber,
+    });
+
+    await newPatient.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Patient registered successfully and account type updated to 'patient'.",
+      patient: newPatient,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
-//   Delete a Blood Request
+// ✅ Update Patient Details
+exports.updatePatient = async (req, res) => {
+  try {
+    const { bloodType, hospital, location, urgency, contactNumber, status } = req.body;
+    const userId = req.user.id;
 
-
-//   Delete a Blood Request
-exports.deleteRequest = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        // Find request by ID
-        const request = await BloodRequest.findById(id);
-        if (!request) {
-            return res.status(404).json({ message: "Blood request not found" });
-        }
-
-        // Ensure only the user who created the request can delete it
-        if (request.email !== req.user.email) {
-            return res.status(403).json({ message: "You are not authorized to delete this request" });
-        }
-
-        await BloodRequest.findByIdAndDelete(id);
-        res.status(200).json({ message: "Blood request deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting blood request:", error);
-        res.status(500).json({ message: "Internal server error", error });
+    // Find the patient by userId
+    const patient = await Patient.findOne({ userId });
+    if (!patient) {
+      return res.status(404).json({ success: false, message: "Patient not found." });
     }
+
+    // Update patient details
+    if (bloodType) patient.bloodType = bloodType;
+    if (hospital) patient.hospital = hospital;
+    if (location) patient.location = location;
+    if (urgency) patient.urgency = urgency;
+    if (contactNumber) patient.contactNumber = contactNumber;
+    if (status) patient.status = status;
+
+    await patient.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Patient details updated successfully.",
+      patient,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
-//   Update a Blood Request
-exports.updateRequest = async (req, res) => {
+// ✅ Delete Patient Record
+exports.deletePatient = async (req, res) => {
     try {
-        const { id } = req.params;
-        const updateFields = req.body;
-
-        // Find the existing request
-        const request = await BloodRequest.findById(id);
-        if (!request) {
-            return res.status(404).json({ message: "Blood request not found" });
-        }
-
-        // Ensure only the user who created the request can update it
-        if (request.email !== req.user.email) {
-            return res.status(403).json({ message: "You are not authorized to update this request" });
-        }
-
-        // Update only provided fields
-        Object.keys(updateFields).forEach((key) => {
-            if (updateFields[key] !== undefined) {
-                request[key] = updateFields[key];
-            }
-        });
-
-        await request.save();
-        res.status(200).json({ message: "Blood request updated successfully", request });
+      const { patientId } = req.params;
+  
+      // Validate ID
+      if (!patientId || !mongoose.Types.ObjectId.isValid(patientId)) {
+        return res.status(400).json({ success: false, message: "Invalid Patient ID." });
+      }
+  
+      // Find and delete the patient by ID
+      const deletedPatient = await Patient.findByIdAndDelete(patientId);
+  
+      if (!deletedPatient) {
+        return res.status(404).json({ success: false, message: "Patient not found." });
+      }
+  
+      // Reset the user's accountType to 'user'
+      const user = await User.findById(deletedPatient.userId);
+      if (user) {
+        user.accountType = "user";
+        await user.save();
+      }
+  
+      res.status(200).json({ success: true, message: "Patient deleted successfully and account type reset to 'user'." });
     } catch (error) {
-        console.error("Error updating blood request:", error);
-        res.status(500).json({ message: "Internal server error", error });
+      res.status(500).json({ success: false, message: error.message });
     }
-};
+  };
+  
 
+// ✅ Get Patient Details
+exports.getPatientDetails = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
-
-// Get All Requests Created by the Logged-in User
-exports.getUserRequests = async (req, res) => {
-    try {
-        const userEmail = req.user.email; // Get email from authenticated user
-
-        // Find all requests created by this user
-        const requests = await BloodRequest.find({ email: userEmail }).sort({ createdAt: -1 });
-
-        if (!requests.length) {
-            return res.status(404).json({ message: "No blood requests found for this user" });
-        }
-
-        res.status(200).json({ success: true, requests });
-    } catch (error) {
-        console.error("Error fetching user blood requests:", error);
-        res.status(500).json({ message: "Internal server error", error });
+    // Find the patient by userId
+    const patient = await Patient.findOne({ userId }).populate("requests previousDonors");
+    if (!patient) {
+      return res.status(404).json({ success: false, message: "Patient not found." });
     }
+
+    res.status(200).json({ success: true, patient });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };

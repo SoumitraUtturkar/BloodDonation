@@ -1,13 +1,23 @@
 const express = require("express");
-const { registerDonor ,getAllRequests,updateDonor} = require("../controllers/Con_Donor");
-const protectRoute = require("../middlewares/auth"); //  Fix: Proper import
-
-
 const router = express.Router();
+const { auth } = require("../middlewares/authMiddleware");
+const {
+  createDonor,
+  updateDonor,
+  deleteDonor,
+  getDonorDetails,
+} = require("../controllers/donorController");
 
-router.post("/register", protectRoute, registerDonor); //  Apply auth middleware
-router.get("/requests", protectRoute, getAllRequests);
+// ✅ Create a new donor and set accountType to 'donor'
+router.post("/create", auth, createDonor);
 
-router.put("/update/:id", protectRoute, updateDonor); //  Apply auth middleware
+// ✅ Update donor details
+router.put("/update", auth, updateDonor);
+
+// ✅ Delete donor record
+router.delete("/delete/:donorId", auth, deleteDonor);
+
+// ✅ Get donor details
+router.get("/details", auth, getDonorDetails);
 
 module.exports = router;

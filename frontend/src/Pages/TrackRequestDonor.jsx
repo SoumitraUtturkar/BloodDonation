@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,10 +9,12 @@ const TrackRequestDonor = () => {
     name: "Alice Smith", 
     bloodType: "O+", 
     contact: "9876543210", 
-    location: "Pune", 
-    hospital: "City Hospital",
-    mapLink: "https://maps.google.com/?q=Pune" 
+    location: "Katraj", 
+    hospital: "Bharti Hospital"
   };
+
+  // Dynamically generate Google Maps search link
+  const mapSearchLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(acceptedPatient.hospital)}`;
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-red-100 to-red-200 flex justify-center items-center p-6">
@@ -39,7 +39,7 @@ const TrackRequestDonor = () => {
           <div className="mt-4 md:mt-0 flex gap-4">
             {/* Map Tracking Button */}
             <a 
-              href={acceptedPatient.mapLink} 
+              href={mapSearchLink} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="px-5 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition"

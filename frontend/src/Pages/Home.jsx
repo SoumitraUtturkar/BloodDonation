@@ -1,10 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../Components/Button";
 import Cards from "../Components/Card";
-import AboutUs from "../Components/about";// Import About Us component
+import AboutUs from "../Components/about";
 import ContactUs from "../Components/Contact";
 
 const Home = () => {
+  const navigate = useNavigate();
+  const [isDonor, setIsDonor] = useState(false);
+
+  // Check if user is a donor
+  const checkUserStatus = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const response = await fetch("http://localhost:3000/api/v2/user-status", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user status");
+      }
+
+      const data = await response.json();
+      if (data.isDonor) {
+        setIsDonor(true);
+      }
+    } catch (error) {
+      console.error("Error checking user status:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkUserStatus();
+  }, []);
+
+  const handleDonateBlood = () => {
+    if (isDonor) {
+      navigate("/live-requests"); // Redirect to live-requests if a donor
+    } else {
+      navigate("/donate-blood");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center p-8 space-y-16">
       
@@ -25,11 +66,12 @@ const Home = () => {
             color="bg-red-600 hover:bg-red-800 text-white py-4 px-10 rounded-lg text-xl font-semibold transition-all duration-300 w-64 h-16 flex items-center justify-center"
             link="/request-blood"
           />
-          <Button
-            text="Donate Blood"
-            color="bg-red-600 hover:bg-red-800 text-white py-4 px-10 rounded-lg text-xl font-semibold transition-all duration-300 w-64 h-16 flex items-center justify-center"
-            link="/donate-blood"
-          />
+          <button
+            onClick={handleDonateBlood}
+            className="bg-red-600 hover:bg-red-800 text-white py-4 px-10 rounded-lg text-xl font-semibold transition-all duration-300 w-64 h-16 flex items-center justify-center"
+          >
+            Donate Blood
+          </button>
         </div>
       </section>
 
@@ -51,20 +93,15 @@ const Home = () => {
 
       {/* About Us Section */}
       <section id="about-us">
-        <AboutUs /> {/* This section is now scrollable via an anchor link */}
+        <AboutUs />
       </section>
 
+      {/* Contact Us Section */}
       <section id="contact-us">
-        <ContactUs /> {/* This section is now scrollable via an anchor link */}
+        <ContactUs />
       </section>
     </div>
   );
 };
 
 export default Home;
-
-
-
-
-
-

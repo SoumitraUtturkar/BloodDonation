@@ -12,20 +12,20 @@ dbConnect();
 app.use(express.json())
 // app.use(express.urlencoded({ extended: true }));
 // app.use(cors()); // Allow frontend to communicate with backend
-app.use(cors({
-    origin: "http://localhost:5173", // Allow frontend to make requests
-    credentials: true // Allow cookies
-  }));
+// app.use(cors({
+//     origin: "http://localhost:5173", // Allow frontend to make requests
+//     credentials: true // Allow cookies
+//   }));
 const PORT = process.env.PORT || 5173
-const user = require("./routes/user");
-const patient = require("./routes/patientRoutes");
+const user = require("./routes/authRoute");
+const patient = require("./routes/patientRoute");
 const Donor = require('./routes/donorRoute');
-const bloodbank = require('./routes/bloodbankRoutes');
+// const bloodbank = require('./routes/bloodbankRoutes');
 //routes
 app.use("/api/v1", user);
-app.use("/api/v2", Donor);
-app.use("/api/v3", patient);
-app.use("/api/v4", bloodbank);
+ app.use("/api/v2", Donor);
+ app.use("/api/v3", patient);
+// app.use("/api/v4", bloodbank);
 
 
 

@@ -27,39 +27,42 @@ exports.createBloodRequest = async (req, res) => {
 };
 
 // ✅ 2. Accept a Blood Request
+
 exports.acceptBloodRequest = async (req, res) => {
-  try {
-    const { requestId } = req.params;
-    const donorId = req.user.id;
-
-    if (!mongoose.Types.ObjectId.isValid(requestId)) {
-      return res.status(400).json({ success: false, message: "Invalid Request ID." });
+    try {
+      const { requestId } = req.params;
+      const donorId = req.user.id;
+  
+      if (!mongoose.Types.ObjectId.isValid(requestId)) {
+        return res.status(400).json({ success: false, message: "Invalid Request ID." });
+      }
+  
+      const bloodRequest = await BloodRequest.findById(requestId);
+      if (!bloodRequest) {
+        return res.status(404).json({ success: false, message: "Blood request not found." });
+      }
+  
+      if (bloodRequest.status !== "Pending") {
+        return res.status(400).json({ success: false, message: "Request is already processed." });
+      }
+  
+      // Find donor by userId
+      const donor = await Donor.findOne({ userId: donorId });
+      if (!donor) {
+        return res.status(404).json({ success: false, message: "Donor not found." });
+      }
+  
+      // Update blood request status
+      bloodRequest.donorId = donorId;
+      bloodRequest.status = "Accepted";
+      await bloodRequest.save();
+  
+      res.status(200).json({ success: true, message: "Blood request accepted successfully.", bloodRequest });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error.message });
     }
-
-    const bloodRequest = await BloodRequest.findById(requestId);
-    if (!bloodRequest) {
-      return res.status(404).json({ success: false, message: "Blood request not found." });
-    }
-
-    if (bloodRequest.status !== "Pending") {
-      return res.status(400).json({ success: false, message: "Request is already processed." });
-    }
-
-    const donor = await Donor.findById(donorId);
-    if (!donor) {
-      return res.status(404).json({ success: false, message: "Donor not found." });
-    }
-
-    bloodRequest.donorId = donorId;
-    bloodRequest.status = "Accepted";
-    await bloodRequest.save();
-
-    res.status(200).json({ success: true, message: "Blood request accepted successfully.", bloodRequest });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
+  };
+  
 // ✅ 3. Complete a Blood Request
 exports.completeBloodRequest = async (req, res) => {
   try {

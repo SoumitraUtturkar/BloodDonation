@@ -48,8 +48,6 @@ const patientSchema = new mongoose.Schema(
       enum: ["Low", "Medium", "High"],
       required: true,
     },
-   
-    photo: { type: String }, 
     contactNumber: {
       type: String,
       required: true,
@@ -65,7 +63,12 @@ const patientSchema = new mongoose.Schema(
       enum: ["Pending", "Matched", "Completed"],
       default: "Pending",
     },
-   
+    requests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "BloodRequest",
+      },
+    ]
    
   },
   { timestamps: true }

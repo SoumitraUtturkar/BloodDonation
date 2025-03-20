@@ -35,12 +35,12 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create User Profile
-    const profileDetails = await Profile.create({
-      gender: null,
-      dateOfBirth: null,
+    // const profileDetails = await Profile.create({
+    //   gender: null,
+    //   dateOfBirth: null,
       
-      contactNumber: contactNumber || null,
-    });
+    //   contactNumber: contactNumber || null,
+    // });
 
     // Create User
     const user = await User.create({
@@ -132,11 +132,10 @@ exports.updateRole = async (req, res) => {
   
       res.status(200).json({
         success: true,
-        message: `Account type updated to ${accountType}`,
+        message:` Account type updated to ${accountType}`,
         user: updatedUser,
       });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }
   };
-  

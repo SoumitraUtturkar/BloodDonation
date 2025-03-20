@@ -6,6 +6,7 @@ const {
   updateDonor,
   deleteDonor,
   getDonorDetails,
+  checkExistingDonor
 } = require("../controllers/donorController");
 
 // ✅ Create a new donor and set accountType to 'donor'
@@ -19,5 +20,7 @@ router.delete("/delete/:donorId", auth, deleteDonor);
 
 // ✅ Get donor details
 router.get("/details", auth, getDonorDetails);
+
+router.get("/check-donor", auth, checkExistingDonor);
 
 module.exports = router;

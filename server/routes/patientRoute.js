@@ -18,6 +18,8 @@ router.put("/update", auth, updatePatient);
 router.delete("/delete/:patientId", auth, deletePatient);
 
 // ✅ Get patient details
-router.get("/details", auth, getPatientDetails);
+// router.get("/details", auth, getPatientDetails);
+router.get("/details/:id", auth, getPatientDetails);
+
 
 module.exports = router;

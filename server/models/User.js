@@ -36,6 +36,25 @@ const userSchema = new mongoose.Schema(
       default:"user"
       
     },
+    // requests: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "BloodRequest",
+    //   },
+    // ],
+   
+    previousDonors: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    donatedPatients: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
 
     // Token for authentication with optional expiration (if needed)
     token: {

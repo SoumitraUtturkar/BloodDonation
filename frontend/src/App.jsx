@@ -30,10 +30,10 @@ function App() {
         <Route path="/request-blood" element={<RequestBlood />} />
         <Route path="/donate-blood" element={<DonateBlood />} />
         <Route path="/live-requests" element={<LiveRequest />} />
-        <Route path="/patient-request" element={<PatientRequest />} />  {/* ✅ Route for Patient Request */}
+        <Route path="/patient-request/:id" element={<PatientRequest />} />  {/* ✅ Route for Patient Request */}
         <Route path="/track-request" element={<TrackRequest />} />
         <Route path="/blood-bank" element={<BloodBankLanding />} />
-        <Route path="/request-donor-track" element={<TrackRequestDonor/>}/>
+        <Route path="/request-donor-track/:id" element={<TrackRequestDonor/>}/>
       </Routes>
     </>
   );

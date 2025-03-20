@@ -120,7 +120,7 @@ const DonateBlood = () => {
 
       const data = await response.json();
       if (data.success && data.bloodRequests) {
-        setRequests(data.bloodRequests);
+        setRequests(data.bloodRequests.filter(req => req.status !== "Accepted" &&  req.status !== "Completed"));
       } else {
         throw new Error("Failed to fetch blood requests.");
       }
@@ -138,27 +138,20 @@ const DonateBlood = () => {
 
   // ✅ Function to update the UI when a request is accepted
   const handleAcceptRequest = (requestId) => {
-    setRequests((prevRequests) =>
-      prevRequests.map((req) =>
-        req._id === requestId ? { ...req, status: "Accepted" } : req
-      )
-    );
+    setRequests((prevRequests) => prevRequests.filter(req => req._id !== requestId));
   };
 
-  // Filter requests based on multiple search criteria using "|" (OR), showing only requests that are not yet accepted
+  // Filter requests based on multiple search criteria using "|" (OR)
   const filteredRequests = requests.filter((req) => {
     const patient = req.patientId;
     const searchRegex = new RegExp(search, "i");
     return (
-      req.status !== "Accepted" &&
-      (
-        searchRegex.test(patient?.name) ||
-        searchRegex.test(patient?.bloodType) ||
-        searchRegex.test(patient?.location) ||
-        searchRegex.test(patient?.hospital) ||
-        searchRegex.test(patient?.urgency) ||
-        searchRegex.test(req.status)
-      )
+      searchRegex.test(patient?.name) ||
+      searchRegex.test(patient?.bloodType) ||
+      searchRegex.test(patient?.location) ||
+      searchRegex.test(patient?.hospital) ||
+      searchRegex.test(patient?.urgency) ||
+      searchRegex.test(req.status)
     );
   });
 

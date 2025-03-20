@@ -127,3 +127,27 @@ exports.getDonorDetails = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+exports.checkExistingDonor = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Check if the user is already a registered donor
+    const existingDonor = await Donor.findOne({ userId });
+
+    if (existingDonor) {
+      return res.status(200).json({
+        success: true,
+        message: "User is already a registered donor.",
+        donor: existingDonor,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "User is not registered as a donor.",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

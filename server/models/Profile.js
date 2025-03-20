@@ -1,22 +1,36 @@
 const mongoose = require("mongoose");
 
-// Define the Profile schema
-const profileSchema = new mongoose.Schema({
-	gender: {
-		type: String,
-	},
-	dateOfBirth: {
-		type: String,
-	},
-	about: {
-		type: String,
-		trim: true,
-	},
-	contactNumber: {
-		type: Number,
-		trim: true,
-	},
-});
+const profileSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true,
+    },
 
-// Export the Profile model
-module.exports = mongoose.model("Profile", profileSchema);   
+    // Basic details from User Schema
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, trim: true },
+    accountType: {
+      type: String,
+      enum: ["user", "admin", "patient", "donor"],
+      required: true,
+    },
+
+    // Patient or Donor Reference
+    patientId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Patient",
+    },
+    donorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Donor",
+    },
+
+    
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Profile", profileSchema); 

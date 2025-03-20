@@ -115,10 +115,9 @@ exports.deletePatient = async (req, res) => {
 // ✅ Get Patient Details
 exports.getPatientDetails = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const { id } = req.params;
+    const patient = await Patient.findOne({ _id: id }).populate("requests");
 
-    // Find the patient by userId
-    const patient = await Patient.findOne({ userId }).populate("requests previousDonors");
     if (!patient) {
       return res.status(404).json({ success: false, message: "Patient not found." });
     }
@@ -128,4 +127,5 @@ exports.getPatientDetails = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
   

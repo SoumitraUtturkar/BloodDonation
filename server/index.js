@@ -21,11 +21,13 @@ const user = require("./routes/authRoute");
 const patient = require("./routes/patientRoute");
 const Donor = require('./routes/donorRoute');
 const bloodRequest = require('./routes/bloodRequestRoute');
+const Profile = require('./models/Profile');
 //routes
 app.use("/api/v1", user);
  app.use("/api/v2", Donor);
  app.use("/api/v3", patient);
  app.use("/api/v4", bloodRequest);
+ app.use("/api/v5", Profile);
 
 
 

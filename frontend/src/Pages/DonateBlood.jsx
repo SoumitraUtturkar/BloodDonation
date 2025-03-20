@@ -263,6 +263,15 @@ const DonateBlood = () => {
     return (
         <div style={styles.container}>
             <h2 style={styles.title}>Donate Blood</h2>
+            <p style={styles.instructions}>
+                <strong>General Instructions for Blood Donation:</strong>
+                <br />✔ Eat a healthy meal before donating blood.
+                <br />✔ Drink plenty of water before and after donation.
+                <br />✔ Ensure you are well-rested before donating.
+                <br />✔ Avoid alcohol 24 hours before donating blood.
+                <br />✔ If feeling unwell, postpone your donation.
+                <br />✔ Carry a valid ID for verification.
+            </p>
             {error && <p style={styles.error}>{error}</p>}
             {successMessage && <p style={styles.success}>{successMessage}</p>}
 
@@ -307,6 +316,12 @@ const styles = {
         color: "#333",
         fontSize: "24px",
         marginBottom: "20px"
+    },
+    instructions: {
+        textAlign: "left",
+        color: "#444",
+        fontSize: "14px",
+        marginBottom: "15px"
     },
     form: {
         display: "flex",

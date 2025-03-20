@@ -4,19 +4,12 @@ import { useNavigate } from "react-router-dom";
 const PatientRequestCard = ({ request, handleDelete }) => {
   const navigate = useNavigate();
 
-  const handleDeleteClick = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this request?");
-    if (confirmDelete) {
-      await handleDelete(request._id);
-    }
-  };
-
   return (
     <div className="w-full bg-gray-100 shadow-md border border-gray-300 hover:border-red-500 transition-all duration-300 p-6 rounded-lg flex flex-col md:flex-row gap-6 items-center">
       <figure className="flex-shrink-0">
         <img
           className="w-24 h-24 rounded-full object-cover border-2 border-gray-400 shadow-md"
-          src={request.photo}
+          src={request.photo || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
           alt="Profile"
           onError={(e) => (e.target.src = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png")}
         />
@@ -40,7 +33,7 @@ const PatientRequestCard = ({ request, handleDelete }) => {
           </div>
         </div>
 
-        <div className="flex justify-center md:justify-end gap-4 mt-4">
+        <div className="flex flex-col md:flex-row justify-center md:justify-end gap-4 mt-4 w-full">
           <button
             onClick={() => navigate(`/edit-request/${request._id}`)}
             className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all"
@@ -48,7 +41,11 @@ const PatientRequestCard = ({ request, handleDelete }) => {
             Modify
           </button>
           <button
-            onClick={handleDeleteClick}
+            onClick={() => {
+              if (window.confirm("Are you sure you want to delete this request?")) {
+                handleDelete(request._id);
+              }
+            }}
             className="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition-all"
           >
             Delete
@@ -60,3 +57,4 @@ const PatientRequestCard = ({ request, handleDelete }) => {
 };
 
 export default PatientRequestCard;
+

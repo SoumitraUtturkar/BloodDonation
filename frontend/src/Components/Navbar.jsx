@@ -14,13 +14,13 @@ const Navbar = () => {
 
   return (
     <nav className="bg-red-600 text-white p-4 shadow-lg">
-      <div className="container mx-auto flex justify-between items-center">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center text-center">
         <div className="flex items-center space-x-3">
           <img src={Logo} alt="RaktVahini Logo" className="h-12 w-12 rounded-full border-2 border-white" />
-          <h1 className="text-2xl font-bold">RaktVahini</h1>
+          <h1 className="text-3xl font-bold">RaktVahini</h1>
         </div>
 
-        <ul className="hidden md:flex space-x-8">
+        <ul className="hidden md:flex space-x-8 text-lg font-semibold">
           <li>
             <Link to="/" className="hover:text-gray-200">Home</Link>
           </li>
@@ -32,10 +32,10 @@ const Navbar = () => {
           </li>
         </ul>
 
-        <div className="hidden md:flex space-x-4">
+        <div className="hidden md:flex space-x-4 text-lg font-semibold items-center">
           {user ? (
             <>
-              <span>Welcome, {user.name}</span>
+              <span className="text-lg">Welcome, {user.name}</span>
               <button onClick={handleLogout} className="bg-white text-red-600 px-4 py-2 rounded-md">
                 Logout
               </button>

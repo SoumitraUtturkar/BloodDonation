@@ -33,7 +33,7 @@ function App() {
         <Route path="/patient-request" element={<PatientRequest />} />  {/* ✅ Route for Patient Request */}
         <Route path="/track-request" element={<TrackRequest />} />
         <Route path="/blood-bank" element={<BloodBankLanding />} />
-        <Route path="/request-donor-track/:id" element={<TrackRequestDonor/>}/>
+        <Route path="/request-donor-track" element={<TrackRequestDonor/>}/>
       </Routes>
     </>
   );

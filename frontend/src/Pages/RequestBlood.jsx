@@ -88,7 +88,7 @@ const RequestBlood = () => {
 
                 if (bloodRequestResponse.status === 201) {
                     setSuccessMessage("Blood request created successfully!");
-                    setTimeout(() => navigate("/patient-dashboard"), 2000); // Redirect after 2 sec
+                    setTimeout(() => navigate("/patient-request"), 2000); // Redirect after 2 sec
                 }
             }
         } catch (error) {

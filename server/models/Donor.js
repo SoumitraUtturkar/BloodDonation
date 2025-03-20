@@ -50,6 +50,7 @@ const donorSchema = new mongoose.Schema(
       required: true, 
       enum: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"] 
     },
+    photo: { type: String }, 
 
     location: { 
       type: String, 

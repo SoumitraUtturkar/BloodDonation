@@ -1,4 +1,4 @@
-const cloudianry = require('cloudianry').v2;
+const cloudinary = require('cloudinary').v2;
 
 
 exports.uploadImageToCloudinary = async (file,folder,height,quality)=>{
@@ -11,5 +11,5 @@ exports.uploadImageToCloudinary = async (file,folder,height,quality)=>{
     }
     options.resource_type = "auto";
 
-    return await cloudianry.uploader.upload(file.tempFilePath,options);
+    return await cloudinary.uploader.upload(file.tempFilePath,options);
 }

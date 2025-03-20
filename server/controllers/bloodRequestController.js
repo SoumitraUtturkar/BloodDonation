@@ -324,3 +324,21 @@ exports.getBloodRequestsByStatus = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+exports.getBloodRequestDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const bloodRequest = await BloodRequest.findById(id)
+      .populate("patientId", "name bloodType location")
+      .populate("donorId", "name bloodType location");
+
+    if (!bloodRequest) {
+      return res.status(404).json({ success: false, message: "Blood request not found." });
+    }
+
+    res.status(200).json({ success: true, bloodRequest });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

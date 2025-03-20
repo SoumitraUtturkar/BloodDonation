@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 const Donor = require("../models/Donor");
 const User = require("../models/User");
+const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
 // ✅ Create a New Donor and Set Account Type to 'donor'
 exports.createDonor = async (req, res) => {
   try {
-    const { bloodType, location, contactNumber, age, gender } = req.body;
+    const { bloodType, location, contactNumber, age, gender, lastDonationDate, isEligible } = req.body;
     const userId = req.user.id;
 
     // Check if the user is already registered as a donor
@@ -20,6 +21,13 @@ exports.createDonor = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found." });
     }
 
+    // Upload photo if available
+    let photoUrl = null;
+    if (req.files?.photo) {
+      const result = await uploadImageToCloudinary(req.files.photo, "donor_photos", 500, 80);
+      photoUrl = result.secure_url;
+    }
+
     // Update accountType to 'donor'
     user.accountType = "donor";
     await user.save();
@@ -29,11 +37,14 @@ exports.createDonor = async (req, res) => {
       userId,
       name: user.name,
       email: user.email,
-      gender,
       bloodType,
       location,
       contactNumber,
       age,
+      gender,
+      lastDonationDate,
+      isEligible,
+      photo: photoUrl,
     });
 
     await newDonor.save();
@@ -58,6 +69,12 @@ exports.updateDonor = async (req, res) => {
     const donor = await Donor.findOne({ userId });
     if (!donor) {
       return res.status(404).json({ success: false, message: "Donor not found." });
+    }
+
+    // Upload new photo if available
+    if (req.files?.photo) {
+      const result = await uploadImageToCloudinary(req.files.photo, "donor_photos", 500, 80);
+      donor.photo = result.secure_url;
     }
 
     // Update donor details
@@ -122,7 +139,33 @@ exports.getDonorDetails = async (req, res) => {
       return res.status(404).json({ success: false, message: "Donor not found." });
     }
 
-    res.status(200).json({ success: true, donor });
+    res.status(200).json({
+      success: true,
+      donor: {
+        ...donor._doc,
+        photo: donor.photo || "No photo available",
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ✅ Get All Donors
+exports.getAllDonors = async (req, res) => {
+  try {
+    const donors = await Donor.find().populate("userId", "name email");
+
+    if (donors.length === 0) {
+      return res.status(404).json({ success: false, message: "No donors found." });
+    }
+
+    const formattedDonors = donors.map(donor => ({
+      ...donor._doc,
+      photo: donor.photo || "No photo available",
+    }));
+
+    res.status(200).json({ success: true, donors: formattedDonors });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -151,3 +194,5 @@ exports.checkExistingDonor = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+

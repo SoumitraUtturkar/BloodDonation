@@ -144,7 +144,7 @@ const RequestCard = ({ request, onAccept }) => {
         onAccept(_id);
 
         // Pass patientId while navigating to TrackRequestDonor
-        setTimeout(() => navigate(`/request-donor-track/${patientId._id}`), 2000);
+        setTimeout(() => navigate(`/request-donor-track/${_id}`), 2000);
       } else {
         throw new Error(data.message || "Failed to accept request.");
       }

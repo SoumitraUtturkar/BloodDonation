@@ -1,122 +1,179 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
-import PatientRequestCard from "../Components/PatientCard";
+
+const API_BASE_URL = "http://localhost:3000/api/v4";
 
 const PatientRequest = () => {
-    const { id } = useParams();
-    return (
-        <div className="text-center my-4">
-            <h2 className="text-xl font-semibold text-gray-700">Patient Request Details</h2>
-            <p className="text-gray-500">Patient ID: {id}</p>
-        </div>
-    );
-};
-
-const PatientRequests = () => {
+  const { id } = useParams(); // Blood Request ID
   const navigate = useNavigate();
-  const { id } = useParams();
-  const [requests, setRequests] = useState([]);
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [token, setToken] = useState(null);
+  const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false); // Controls modal visibility
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (!storedToken) {
-      setError("Unauthorized: Please log in first.");
-      setLoading(false);
-      return;
-    }
-    setToken(storedToken);
-
-    if (!id) {
-      setError("Patient ID is missing in the URL.");
-      setLoading(false);
-      return;
-    }
-
-    const fetchPatientDetails = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/v3/details/${id}`, {
-          headers: { Authorization: `Bearer ${storedToken}` },
-          withCredentials: true,
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Unauthorized: Please log in first.");
+
+        // Fetch Blood Request Details
+        const bloodRequestRes = await axios.get(`${API_BASE_URL}/blood-request/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (response.data.success) {
-          setPatient(response.data.patient);
-          setRequests(response.data.patient.requests || []);
-        } else {
-          setError(response.data.message || "Failed to fetch patient details.");
-        }
+        if (!bloodRequestRes.data.success) throw new Error("Blood request not found.");
+
+        const patientId = bloodRequestRes.data.bloodRequest.patientId?._id;
+        if (!patientId) throw new Error("Patient details not found.");
+
+        // Fetch Patient Details
+        const patientRes = await axios.get(`http://localhost:3000/api/v3/details/${patientId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!patientRes.data.success) throw new Error("Patient details not available.");
+
+        setPatient(patientRes.data.patient);
       } catch (err) {
-        setError(err.response?.data?.message || "Error fetching data.");
+        setError(err.response?.data?.message || err.message || "Error fetching data.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPatientDetails();
-  }, [id, navigate]);
+    fetchData();
+  }, [id]);
 
-  const handleDelete = async (requestId) => {
-    if (window.confirm("Are you sure you want to delete this request?")) {
-      try {
-        await axios.delete(`/api/v3/request/${requestId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setRequests(requests.filter((request) => request._id !== requestId));
-      } catch (err) {
-        setError("Failed to delete the request.");
+  const handleCompleteRequest = async () => {
+    try {
+      setShowModal(false);
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Unauthorized: Please log in first.");
+
+      const response = await axios.put(`${API_BASE_URL}/complete/${id}`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        alert("Blood request marked as completed successfully.");
+        navigate(-1);
+      } else {
+        throw new Error(response.data.message);
       }
+    } catch (error) {
+      alert(error.response?.data?.message || error.message || "Error completing request.");
     }
   };
 
+  if (loading) {
+    return (
+      <div className="h-screen flex justify-center items-center text-lg text-gray-600">
+        ⏳ Loading patient details...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center text-red-600">
+        ❌ {error}
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 px-5 py-2 bg-red-600 text-white rounded-full shadow-md hover:bg-red-800 transition-all"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  const mapSearchLink = patient.hospital
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(patient.hospital)}`
+    : "#";
+
   return (
-    <div className="max-w-5xl mx-auto py-8 px-4 bg-gray-50 min-h-screen">
-      <h2 className="text-3xl font-semibold text-center mb-8 text-red-600">Your Blood Requests</h2>
-      
-      {error && <p className="text-red-500 text-center">{error}</p>}
-      
-      {loading ? (
-        <p className="text-center text-gray-600">Loading...</p>
-      ) : (
-        <>
-          <PatientRequest />
+    <div className="min-h-screen bg-gradient-to-r from-red-50 to-red-100 flex justify-center items-center p-6">
+      <div className="max-w-3xl w-full bg-white p-8 rounded-3xl shadow-xl border border-gray-300">
+        <h2 className="text-3xl font-bold text-red-700 text-center mb-6">🩸 Your Blood Request</h2>
+        
+        <div className="bg-gray-50 p-6 rounded-xl shadow-md border border-gray-200 flex flex-col md:flex-row items-center md:items-start">
+          <img
+            src={patient.photo || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
+            alt="Patient"
+            className="w-28 h-28 rounded-full border-4 border-gray-300 shadow-md"
+          />
+          <div className="text-center md:text-left ml-4 mt-4 md:mt-0">
+            <p className="text-xl font-semibold text-gray-800">Patient: {patient.name}</p>
+            <p className="text-gray-700 mt-1"><strong>Blood Type:</strong> {patient.bloodType}</p>
+            <p className="text-gray-700"><strong>Hospital:</strong> {patient.hospital}</p>
+            <p className="text-gray-700"><strong>Location:</strong> {patient.location}</p>
+            <p className="text-gray-700"><strong>Contact:</strong> {patient.phone}</p>
+          </div>
+        </div>
 
-          {patient && (
-            <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-              <h3 className="text-2xl font-semibold text-gray-800 text-center">Patient Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-gray-700">
-                <p><strong>Name:</strong> {patient.name}</p>
-                <p><strong>Blood Type:</strong> {patient.bloodType}</p>
-                <p><strong>Gender:</strong> {patient.gender}</p>
-                <p><strong>Email:</strong> {patient.email}</p>
-                <p><strong>Hospital:</strong> {patient.hospital}</p>
-                <p><strong>Age:</strong> {patient.age}</p>
-                <p><strong>Location:</strong> {patient.location}</p>
-                <p><strong>Urgency:</strong> {patient.urgency}</p>
-                <p><strong>Contact Number:</strong> {patient.contactNumber}</p>
-                <p><strong>Status:</strong> {patient.status}</p>
-                <p><strong>Previous Donors:</strong> {patient.previousDonors?.length || 0}</p>
-              </div>
-            </div>
+        <div className="mt-6 flex flex-wrap justify-center gap-4">
+          {patient.hospital && (
+            <a
+              href={mapSearchLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-blue-700 transition"
+            >
+              ✏️ Modify
+            </a>
           )}
+          {patient.phone && (
+            <a
+              href={`tel:${patient.phone}`}
+              className="px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-green-700 transition"
+            >
+              📞 Call Now
+            </a>
+          )}
+          <button
+            className="px-6 py-3 bg-gray-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-gray-700 transition"
+            onClick={() => setShowModal(true)}
+          >
+            ✅ Complete
+          </button>
+          <button
+            className="px-6 py-3 bg-red-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-red-700 transition"
+            onClick={() => navigate(-1)}
+          >
+            ❌ Delete
+          </button>
+        </div>
+      </div>
 
-          {requests.length > 0 ? (
-            <div className="grid gap-6">
-              {requests.map((request) => (
-                <PatientRequestCard key={request._id} request={request} handleDelete={handleDelete} />
-              ))}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
+            <h3 className="text-xl font-semibold text-red-700">Confirm Completion</h3>
+            <p className="text-gray-600 mt-2">Are you sure you want to mark this request as completed?</p>
+            <div className="mt-4 flex justify-center gap-4">
+              <button
+                onClick={handleCompleteRequest}
+                className="px-5 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700 transition"
+              >
+                Yes, Complete
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-5 py-2 bg-gray-300 text-gray-800 rounded shadow hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
             </div>
-          ) : (
-            <p className="text-center text-gray-600">No blood requests found.</p>
-          )}
-        </>
+          </div>
+        </div>
       )}
     </div>
   );
 };
 
-export default PatientRequests;
+export default PatientRequest;

@@ -167,3 +167,25 @@ exports.getAllDonors = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+exports.getAllDonorsByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "User ID is required." });
+    }
+
+    // Fetch donors where userId matches the provided userId
+    const donors = await Donor.find({ userId }).populate("userId", "name email");
+
+    if (donors.length === 0) {
+      return res.status(404).json({ success: false, message: "No donors found for this user." });
+    }
+
+    res.status(200).json({ success: true, donors });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

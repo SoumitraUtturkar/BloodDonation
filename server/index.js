@@ -21,7 +21,7 @@ const user = require("./routes/authRoute");
 const patient = require("./routes/patientRoute");
 const Donor = require('./routes/donorRoute');
 const bloodRequest = require('./routes/bloodRequestRoute');
-const Profile = require('./models/Profile');
+const Profile = require('./routes/profileRoute');
 //routes
 app.use("/api/v1", user);
  app.use("/api/v2", Donor);

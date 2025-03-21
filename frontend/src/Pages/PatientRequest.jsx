@@ -6,6 +6,7 @@ const API_BASE_URL = "http://localhost:3000/api/v4";
 
 const PatientRequest = () => {
   const { id } = useParams(); // Blood Request ID
+  const pid=id._patientId;
   const navigate = useNavigate();
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -117,24 +118,13 @@ const PatientRequest = () => {
         </div>
 
         <div className="mt-6 flex flex-wrap justify-center gap-4">
-          {patient.hospital && (
-            <a
-              href={mapSearchLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-blue-700 transition"
-            >
-              ✏️ Modify
-            </a>
-          )}
-          {patient.phone && (
-            <a
-              href={`tel:${patient.phone}`}
-              className="px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-green-700 transition"
-            >
-              📞 Call Now
-            </a>
-          )}
+          
+          <button
+            className="px-6 py-3 bg-red-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-red-700 transition"
+            onClick={() => navigate(`/update-blood-request/${id}`)}
+          >
+            Modify
+          </button>
           <button
             className="px-6 py-3 bg-gray-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-gray-700 transition"
             onClick={() => setShowModal(true)}

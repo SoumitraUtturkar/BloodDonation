@@ -6,16 +6,10 @@ exports.getProfile = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Find the user
+    // Find the user and populate name, bloodType, and contactNumber for references
     const user = await User.findById(userId)
-      .populate({
-        path: "previousDonors",
-        select: "name bloodType",
-      })
-      .populate({
-        path: "donatedPatients",
-        select: "name bloodType",
-      });
+      .populate("previousDonors", "name bloodType contactNumber")
+      .populate("donatedPatients", "name bloodType contactNumber");
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
@@ -33,20 +27,38 @@ exports.getProfile = async (req, res) => {
       updatedAt: user.updatedAt,
     };
 
-    // Retrieve additional details for patients and donors
+    // Retrieve patient details if user is a patient
     if (user.accountType === "patient") {
-      const patient = await Patient.findOne({ userId }).select(
-        "bloodType gender age location contactNumber hospital urgency status"
-      );
+      const patient = await Patient.findOne({ userId });
       if (patient) {
-        profileData = { ...profileData, ...patient._doc };
+        profileData = {
+          ...profileData,
+          bloodType: patient.bloodType,
+          gender: patient.gender,
+          age: patient.age,
+          location: patient.location,
+          contactNumber: patient.contactNumber,
+          hospital: patient.hospital,
+          urgency: patient.urgency,
+          status: patient.status,
+        };
       }
-    } else if (user.accountType === "donor") {
-      const donor = await Donor.findOne({ userId }).select(
-        "bloodType gender age location contactNumber lastDonationDate isEligible"
-      );
+    }
+
+    // Retrieve donor details if user is a donor
+    if (user.accountType === "donor") {
+      const donor = await Donor.findOne({ userId });
       if (donor) {
-        profileData = { ...profileData, ...donor._doc };
+        profileData = {
+          ...profileData,
+          bloodType: donor.bloodType,
+          gender: donor.gender,
+          age: donor.age,
+          location: donor.location,
+          contactNumber: donor.contactNumber,
+          lastDonationDate: donor.lastDonationDate,
+          isEligible: donor.isEligible,
+        };
       }
     }
 

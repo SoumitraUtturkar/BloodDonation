@@ -35,8 +35,17 @@ const Navbar = () => {
         <div className="hidden md:flex space-x-4 text-lg font-semibold items-center">
           {user ? (
             <>
-              <span className="text-lg">Welcome, {user.name}</span>
-              <button onClick={handleLogout} className="bg-white text-red-600 px-4 py-2 rounded-md">
+              <span className="text-lg animate-pulse">Hello, {user.name}</span>
+              <button
+                onClick={() => navigate("/profile")}
+                className="bg-white text-red-600 px-4 py-2 rounded-md"
+              >
+                Profile
+              </button>
+              <button
+                onClick={handleLogout}
+                className="bg-white text-red-600 px-4 py-2 rounded-md"
+              >
                 Logout
               </button>
             </>

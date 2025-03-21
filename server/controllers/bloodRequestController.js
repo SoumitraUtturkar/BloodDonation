@@ -342,3 +342,27 @@ exports.getBloodRequestDetails = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+
+exports.getBloodRequestIdByUserId = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const patient = await Patient.findOne({ userId });
+
+    if (!patient) {
+      return res.status(404).json({ success: false, message: "No blood request found for this user." });
+    }
+
+    const bloodRequest = await BloodRequest.findOne({ patientId: patient._id }).select("_id");
+
+    if (!bloodRequest) {
+      return res.status(404).json({ success: false, message: "Blood request not found." });
+    }
+
+    res.status(200).json({ success: true, bloodRequestId: bloodRequest._id });
+  } catch (error) {
+    return handleError(res, error, "Error fetching blood request ID");
+  }
+};
+

@@ -51,13 +51,49 @@ exports.createPatient = async (req, res) => {
 };
 
 // ✅ Update Patient Details
+// exports.updatePatient = async (req, res) => {
+//   try {
+//     const { bloodType, hospital, location, urgency, contactNumber, status } = req.body;
+//     const userId = req.user.id;
+
+//     // Find the patient by userId
+//     const patient = await Patient.findOne({ userId });
+//     if (!patient) {
+//       return res.status(404).json({ success: false, message: "Patient not found." });
+//     }
+
+//     // Update patient details
+//     if (bloodType) patient.bloodType = bloodType;
+//     if (hospital) patient.hospital = hospital;
+//     if (location) patient.location = location;
+//     if (urgency) patient.urgency = urgency;
+//     if (contactNumber) patient.contactNumber = contactNumber;
+//     if (status) patient.status = status;
+
+//     await patient.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Patient details updated successfully.",
+//       patient,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
 exports.updatePatient = async (req, res) => {
   try {
-    const { bloodType, hospital, location, urgency, contactNumber, status } = req.body;
-    const userId = req.user.id;
+    const { patientId } = req.params; // Get patientId from URL
+    const { bloodType, hospital, location, urgency, contactNumber} = req.body;
 
-    // Find the patient by userId
-    const patient = await Patient.findOne({ userId });
+    // Validate patientId before querying
+    if (!patientId || patientId.length !== 24) {
+      return res.status(400).json({ success: false, message: "Invalid patient ID." });
+    }
+
+    // Find the patient by patientId
+    const patient = await Patient.findById(patientId);
     if (!patient) {
       return res.status(404).json({ success: false, message: "Patient not found." });
     }
@@ -68,7 +104,7 @@ exports.updatePatient = async (req, res) => {
     if (location) patient.location = location;
     if (urgency) patient.urgency = urgency;
     if (contactNumber) patient.contactNumber = contactNumber;
-    if (status) patient.status = status;
+    // if (status) patient.status = status;
 
     await patient.save();
 
@@ -81,6 +117,7 @@ exports.updatePatient = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 // ✅ Delete Patient Record
 exports.deletePatient = async (req, res) => {
@@ -128,4 +165,26 @@ exports.getPatientDetails = async (req, res) => {
   }
 };
 
-  
+exports.checkExistingPatient = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Check if the user is already a registered patient
+    const existingPatient = await Patient.findOne({ userId });
+
+    if (existingPatient) {
+      return res.status(200).json({
+        success: true,
+        message: "User is already registered as a patient.",
+        patient: existingPatient,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "User is not registered as a patient.",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

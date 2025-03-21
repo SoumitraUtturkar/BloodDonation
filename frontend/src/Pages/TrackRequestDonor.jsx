@@ -96,58 +96,80 @@ const TrackRequestDonor = () => {
     : "#";
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-red-50 to-red-100 flex justify-center items-center p-6">
-      <div className="max-w-3xl w-full bg-white p-8 rounded-3xl shadow-xl border border-gray-300">
-        <h2 className="text-3xl font-bold text-red-700 text-center mb-6">🩸 Track Your Accepted Patient</h2>
-        <div className="bg-gray-50 p-6 rounded-xl shadow-md border border-gray-200 flex flex-col md:flex-row justify-between items-center">
-          <img
-            src={patient.photo || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
-            alt="Patient"
-            className="w-28 h-28 rounded-full border-4 border-gray-300 shadow-md"
-          />
-          <div className="text-center md:text-left ml-4">
-            <p className="text-xl font-semibold text-gray-800">Patient: {patient.name}</p>
-            <p className="text-gray-700 mt-1"><strong>Blood Type:</strong> {patient.bloodType}</p>
-            <p className="text-gray-700"><strong>Hospital:</strong> {patient.hospital}</p>
-            <p className="text-gray-700"><strong>Location:</strong> {patient.location}</p>
-            <p className="text-gray-700"><strong>Contact:</strong> {patient.phone}</p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-r from-red-100 to-red-200 flex justify-center items-center p-6">
+    <div className="max-w-3xl w-full bg-white p-8 rounded-3xl shadow-2xl border border-gray-300">
+      <h2 className="text-3xl font-extrabold text-red-700 text-center mb-6 drop-shadow-lg">
+        🩸 Track Your Accepted Patient
+      </h2>
+      
+      {/* Patient Info Card */}
+      <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex flex-col md:flex-row justify-between items-center">
+        <img
+          src={patient.photo || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
+          alt="Patient"
+          className="w-32 h-32 rounded-full border-4 border-red-400 shadow-lg"
+        />
+        <div className="text-center md:text-left ml-0 md:ml-6 mt-4 md:mt-0">
+          <p className="text-xl font-semibold text-gray-900">
+            🏥 <span className="text-red-600">Patient:</span> {patient.name}
+          </p>
+          <p className="text-gray-700 mt-1">
+            <strong>🩸 Blood Type:</strong> <span className="font-medium text-red-600">{patient.bloodType}</span>
+          </p>
+          <p className="text-gray-700">
+            <strong>🏥 Hospital:</strong> {patient.hospital}
+          </p>
+          <p className="text-gray-700">
+            <strong>📍 Location:</strong> {patient.location}
+          </p>
+          <p className="text-gray-700">
+            <strong>📞 Contact:</strong> {patient.phone}
+          </p>
         </div>
-        <div className="mt-6 flex flex-col md:flex-row justify-center gap-4">
-          {patient.hospital && (
-            <a 
-              href={mapSearchLink} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-blue-700 transition"
-            >
-              📍 Track on Map
-            </a>
-          )}
-          {patient.phone && (
-            <a 
-              href={`tel:${patient.phone}`} 
-              className="px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-green-700 transition"
-            >
-              📞 Call Now
-            </a>
-          )}
-        </div>
-        <div className="mt-6 flex flex-col md:flex-row justify-center gap-4">
-          <button
-            className="px-6 py-3 bg-gray-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-gray-700 transition"
-            onClick={() => setShowModal(true)} // Open modal
+      </div>
+  
+      {/* Action Buttons */}
+      <div className="mt-6 flex flex-col md:flex-row justify-center gap-4">
+        {patient.hospital && (
+          <a
+            href={mapSearchLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-blue-700 hover:scale-105 transition-all transform duration-300"
           >
-            ❌ Reject Request
-          </button>
-        </div>
+            📍 Track on Map
+          </a>
+        )}
+        {patient.phone && (
+          <a
+            href={`tel:${patient.phone}`}
+            className="px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-green-700 hover:scale-105 transition-all transform duration-300"
+          >
+            📞 Call Now
+          </a>
+        )}
+      </div>
+  
+      {/* Reject Button */}
+      <div className="mt-6 flex justify-center">
         <button
-          className="mt-8 px-6 py-3 bg-red-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-red-700 transition block mx-auto"
-          onClick={() => navigate(-1)}
+          className="px-6 py-3 bg-gray-700 text-white text-lg font-semibold rounded-xl shadow-md hover:bg-gray-800 hover:scale-105 transition-all transform duration-300"
+          onClick={() => setShowModal(true)} // Open modal
         >
-          ⬅️ Back to Dashboard
+          ❌ Reject Request
         </button>
       </div>
+  
+      {/* Back Button */}
+      <button
+        className="mt-8 px-6 py-3 bg-red-600 text-white text-lg font-bold rounded-xl shadow-md hover:bg-red-700 hover:scale-105 transition-all transform duration-300 block mx-auto"
+        onClick={() => navigate(-1)}
+      >
+        ⬅️ Back to Dashboard
+      </button>
+    </div>
+  
+  
 
       {/* Custom Pop-up Modal */}
       {showModal && (

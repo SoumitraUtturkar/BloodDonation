@@ -15,6 +15,8 @@ import PatientRequest from "./Pages/PatientRequest.jsx";  // ✅ Import PatientR
 import TrackRequest from "./Pages/TrackRequest.jsx";
 import BloodBankLanding from "./Pages/BloodBankLanding.jsx";
 import TrackRequestDonor from "./Pages/TrackRequestDonor.jsx";
+import UpdateBloodRequest from "./Pages/UpdateBlood.jsx";
+import Profile from "./Pages/Profile.jsx";
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
         <Route path="/track-request" element={<TrackRequest />} />
         <Route path="/blood-bank" element={<BloodBankLanding />} />
         <Route path="/request-donor-track/:id" element={<TrackRequestDonor/>}/>
+        <Route path="/update-blood-request/:id" element={<UpdateBloodRequest />} /> 
+        <Route path="/profile" element={<Profile/>}/>
       </Routes>
     </>
   );

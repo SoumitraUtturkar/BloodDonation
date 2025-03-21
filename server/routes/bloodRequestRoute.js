@@ -8,7 +8,7 @@ const {
   rejectBloodRequest,
   getAllBloodRequests,
   getBloodRequestsByStatus,
-  getBloodRequestDetails
+  getBloodRequestDetails,getBloodRequestIdByUserId
 } = require("../controllers/bloodRequestController");
 
 // ✅ Create Blood Request (Patient Only)
@@ -30,5 +30,7 @@ router.get("/all", auth,  getAllBloodRequests);
 router.get("/status/:status", auth,  getBloodRequestsByStatus);
 
 router.get("/blood-request/:id",auth,getBloodRequestDetails);
+
+router.get("/:userId", auth, getBloodRequestIdByUserId);
 
 module.exports = router;

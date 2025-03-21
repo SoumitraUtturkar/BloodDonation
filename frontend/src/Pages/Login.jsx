@@ -29,6 +29,7 @@ const Login = () => {
       login(response.data.user, response.data.token);
 
       setSuccessMessage(`Welcome, ${response.data.user.name}! Redirecting...`);
+      localStorage.setItem("userId", response.data.user._id); // Ensure `_id` exists in response
       setTimeout(() => navigate("/"), 1000);
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");

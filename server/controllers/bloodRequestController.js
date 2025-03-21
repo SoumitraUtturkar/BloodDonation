@@ -5,6 +5,93 @@ const Patient = require("../models/Patient");
 const Donor = require("../models/Donor");
 const mailSender = require('../utils/mailSender'); // Adjust the path if needed
 
+// exports.createBloodRequest = async (req, res) => {
+//   try {
+//     const { patientId } = req.body;
+
+//     // Validate patientId
+//     if (!mongoose.Types.ObjectId.isValid(patientId)) {
+//       return res.status(400).json({ success: false, message: "Invalid Patient ID." });
+//     }
+
+//     // Find Patient
+//     const patient = await Patient.findById(patientId).populate('userId', 'email name');
+//     if (!patient || !patient.userId?.email) {
+//       return res.status(404).json({ success: false, message: "Patient not found or missing email." });
+//     }
+
+//     // Create Blood Request
+//     const bloodRequest = new BloodRequest({ patientId });
+//     await bloodRequest.save();
+
+//     // ✅ Send Email to Patient
+//     const emailBody = `
+//       <h2>Hello ${patient.name},</h2>
+//       <p>Your blood request has been successfully submitted.</p>
+//       <p>We will notify you once a donor accepts your request.</p>
+//       <p>Thank you for using RaktVahini. Stay strong!</p>
+//       <p>Regards, <br> RaktVahini Team</p>
+//     `;
+//     await mailSender(patient.userId.email, "Blood Request Submitted Successfully", emailBody);
+
+//     console.log("✅ Email sent to patient.");
+
+//     // ✅ Find Compatible Donors
+//     const compatibleDonors = await Donor.find({ 
+//       bloodType: { $in: compatibility[patient.bloodType] },
+//       isEligible: true
+//     }).populate('userId', 'email name');
+
+//     if (compatibleDonors.length > 0) {
+//       console.log(`🔎 Found ${compatibleDonors.length} compatible donors.`);
+      
+//       // ✅ Send Email to Each Compatible Donor
+//       compatibleDonors.forEach(async (donor) => {
+//         const donorEmailBody = `
+//           <h2>Dear ${donor.name},</h2>
+//           <p>We have an urgent blood request from a patient who needs ${patient.bloodType} blood.</p>
+//           <p>Your generous donation can save a life. Please consider responding promptly.</p>
+//           <p>Visit RaktVahini to accept the request.</p>
+//           <p>Thank you for your kindness!</p>
+//           <p>Regards, <br> RaktVahini Team</p>
+//         `;
+
+//         try {
+//           await mailSender(donor.userId.email, "Urgent: Blood Donation Request", donorEmailBody);
+//           console.log(`📧 Email sent to ${donor.name} (${donor.userId.email}).`);
+//         } catch (error) {
+//           console.error(`❗ Failed to send email to ${donor.name}:, error.message`);
+//         }
+//       });
+//     } else {
+//       console.log("⚠ No compatible donors found.");
+//     }
+
+//     // Response to Client
+//     res.status(201).json({ 
+//       success: true, 
+//       message: "Blood request created successfully. Emails sent to compatible donors.",
+//       bloodRequest 
+//     });
+
+//   } catch (error) {
+//     console.error("❗ Error creating blood request:", error);
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+// // ✅ Blood Type Compatibility Function
+// const compatibility = {
+//   "O-": ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],
+//   "O+": ["O+", "A+", "B+", "AB+"],
+//   "A-": ["A-", "A+", "AB-", "AB+"],
+//   "A+": ["A+", "AB+"],
+//   "B-": ["B-", "B+", "AB-", "AB+"],
+//   "B+": ["B+", "AB+"],
+//   "AB-": ["AB-", "AB+"],
+//   "AB+": ["AB+"],
+// };
+
 exports.createBloodRequest = async (req, res) => {
   try {
     const { patientId } = req.body;
@@ -27,75 +114,27 @@ exports.createBloodRequest = async (req, res) => {
     // ✅ Send Email to Patient
     const emailBody = `
       <h2>Hello ${patient.name},</h2>
-      <p>Your blood request has been successfully submitted.</p>
+      <p>Your blood request has been successfully generated.</p>
       <p>We will notify you once a donor accepts your request.</p>
       <p>Thank you for using RaktVahini. Stay strong!</p>
       <p>Regards, <br> RaktVahini Team</p>
     `;
+
+    console.log("📧 Sending Blood Request Confirmation Email...");
     await mailSender(patient.userId.email, "Blood Request Submitted Successfully", emailBody);
-
     console.log("✅ Email sent to patient.");
-
-    // ✅ Find Compatible Donors
-    const compatibleDonors = await Donor.find({ 
-      bloodType: { $in: compatibility[patient.bloodType] },
-      isEligible: true
-    }).populate('userId', 'email name');
-
-    if (compatibleDonors.length > 0) {
-      console.log(`🔎 Found ${compatibleDonors.length} compatible donors.`);
-      
-      // ✅ Send Email to Each Compatible Donor
-      compatibleDonors.forEach(async (donor) => {
-        const donorEmailBody = `
-          <h2>Dear ${donor.name},</h2>
-          <p>We have an urgent blood request from a patient who needs ${patient.bloodType} blood.</p>
-          <p>Your generous donation can save a life. Please consider responding promptly.</p>
-          <p>Visit RaktVahini to accept the request.</p>
-          <p>Thank you for your kindness!</p>
-          <p>Regards, <br> RaktVahini Team</p>
-        `;
-
-        try {
-          await mailSender(donor.userId.email, "Urgent: Blood Donation Request", donorEmailBody);
-          console.log(`📧 Email sent to ${donor.name} (${donor.userId.email}).`);
-        } catch (error) {
-          console.error(`❗ Failed to send email to ${donor.name}:, error.message`);
-        }
-      });
-    } else {
-      console.log("⚠ No compatible donors found.");
-    }
 
     // Response to Client
     res.status(201).json({ 
       success: true, 
-      message: "Blood request created successfully. Emails sent to compatible donors.",
+      message: "Blood request created successfully and email sent to the patient.", 
       bloodRequest 
     });
-
   } catch (error) {
     console.error("❗ Error creating blood request:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
-// ✅ Blood Type Compatibility Function
-const isBloodTypeCompatible = (donorBloodType, patientBloodType) => {
-  const compatibility = {
-    "O-": ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],
-    "O+": ["O+", "A+", "B+", "AB+"],
-    "A-": ["A-", "A+", "AB-", "AB+"],
-    "A+": ["A+", "AB+"],
-    "B-": ["B-", "B+", "AB-", "AB+"],
-    "B+": ["B+", "AB+"],
-    "AB-": ["AB-", "AB+"],
-    "AB+": ["AB+"],
-  };
-
-  return compatibility[donorBloodType]?.includes(patientBloodType) || false;
-};
-
 
 
 

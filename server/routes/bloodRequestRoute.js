@@ -8,7 +8,7 @@ const {
   rejectBloodRequest,
   getAllBloodRequests,
   getBloodRequestsByStatus,
-  getBloodRequestDetails,getBloodRequestIdByUserId
+  getBloodRequestDetails,getBloodRequestIdByUserId,deleteBloodRequest
 } = require("../controllers/bloodRequestController");
 
 // ✅ Create Blood Request (Patient Only)
@@ -32,5 +32,7 @@ router.get("/status/:status", auth,  getBloodRequestsByStatus);
 router.get("/blood-request/:id",auth,getBloodRequestDetails);
 
 router.get("/:userId", auth, getBloodRequestIdByUserId);
+
+router.delete("/delete/:requestId", auth, deleteBloodRequest);
 
 module.exports = router;

@@ -7,6 +7,7 @@ const API_BASE_URL = "http://localhost:3000/api/v4";
 const UpdatePatientForm = () => {
     const navigate = useNavigate();
     const { id } = useParams(); // Blood request ID from URL
+    const [patientId, setPatientId] = useState("");
     const [formData, setFormData] = useState({
         bloodType: "",
         hospital: "",
@@ -28,24 +29,23 @@ const UpdatePatientForm = () => {
 
         const fetchPatientDetails = async () => {
             try {
-                // Step 1: Fetch blood request details to get patientId
                 const bloodRequestRes = await axios.get(`${API_BASE_URL}/blood-request/${id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
                 if (!bloodRequestRes.data.success) throw new Error("Blood request not found.");
 
-                const patientId = bloodRequestRes.data.bloodRequest.patientId?._id;
-                if (!patientId) throw new Error("Patient details not found.");
+                const patientIdFetched = bloodRequestRes.data.bloodRequest.patientId?._id;
+                if (!patientIdFetched) throw new Error("Patient details not found.");
 
-                // Step 2: Fetch patient details using patientId
-                const patientRes = await axios.get(`http://localhost:3000/api/v3/details/${patientId}`, {
+                setPatientId(patientIdFetched);
+
+                const patientRes = await axios.get(`http://localhost:3000/api/v3/details/${patientIdFetched}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
                 if (!patientRes.data.success) throw new Error("Patient details not available.");
 
-                // Step 3: Set form data with patient details
                 setFormData(patientRes.data.patient);
             } catch (err) {
                 setError(err.response?.data?.message || err.message || "Error fetching data.");
@@ -67,12 +67,17 @@ const UpdatePatientForm = () => {
         setError("");
         setSuccessMessage("");
     
+        if (!patientId) {
+            setError("Patient ID is missing.");
+            return;
+        }
+    
         try {
             const response = await axios.put(
                 `http://localhost:3000/api/v3/update/${patientId}`,
                 formData,
                 {
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
@@ -81,7 +86,7 @@ const UpdatePatientForm = () => {
     
             if (response.data.success) {
                 setSuccessMessage("Patient details updated successfully!");
-                setTimeout(() => navigate(`/patient-request/${id}`), 2000); // Navigate to /request
+                setTimeout(() => navigate(`/patient-request/${id}`), 2000);
             } else {
                 throw new Error(response.data.message);
             }
@@ -89,7 +94,7 @@ const UpdatePatientForm = () => {
             setError(error.response?.data?.message || "Update failed. Please try again.");
         }
     };
-    
+
 
     if (loading) return <p>Loading...</p>;
 
@@ -133,51 +138,13 @@ const UpdatePatientForm = () => {
 };
 
 const styles = {
-    container: {
-        maxWidth: "400px",
-        margin: "40px auto",
-        padding: "20px",
-        borderRadius: "8px",
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-        backgroundColor: "#fff",
-        textAlign: "center"
-    },
-    title: {
-        color: "#333",
-        fontSize: "24px",
-        marginBottom: "20px"
-    },
-    form: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px"
-    },
-    input: {
-        padding: "10px",
-        borderRadius: "5px",
-        border: "1px solid #ccc",
-        fontSize: "16px"
-    },
-    button: {
-        padding: "10px",
-        borderRadius: "5px",
-        border: "none",
-        backgroundColor: "#e63946",
-        color: "white",
-        fontSize: "16px",
-        cursor: "pointer",
-        marginTop: "10px"
-    },
-    error: {
-        color: "red",
-        fontSize: "14px",
-        marginBottom: "10px"
-    },
-    success: {
-        color: "green",
-        fontSize: "14px",
-        marginBottom: "10px"
-    }
+    container: { maxWidth: "400px", margin: "40px auto", padding: "20px", borderRadius: "8px", boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", backgroundColor: "#fff", textAlign: "center" },
+    title: { color: "#333", fontSize: "24px", marginBottom: "20px" },
+    form: { display: "flex", flexDirection: "column", gap: "10px" },
+    input: { padding: "10px", borderRadius: "5px", border: "1px solid #ccc", fontSize: "16px" },
+    button: { padding: "10px", borderRadius: "5px", border: "none", backgroundColor: "#e63946", color: "white", fontSize: "16px", cursor: "pointer", marginTop: "10px" },
+    error: { color: "red", fontSize: "14px", marginBottom: "10px" },
+    success: { color: "green", fontSize: "14px", marginBottom: "10px" }
 };
 
 export default UpdatePatientForm;

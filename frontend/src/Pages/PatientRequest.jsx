@@ -55,14 +55,13 @@ const PatientRequest = () => {
       setShowModal(false);
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Unauthorized: Please log in first.");
-
+  
       const response = await axios.put(`${API_BASE_URL}/complete/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization:` Bearer ${token} `},
       });
-
+  
       if (response.data.success) {
-        alert("Blood request marked as completed successfully.");
-        navigate(-1);
+        navigate("/thank-you"); // Redirect to Thank You page
       } else {
         throw new Error(response.data.message);
       }
@@ -70,6 +69,56 @@ const PatientRequest = () => {
       alert(error.response?.data?.message || error.message || "Error completing request.");
     }
   };
+
+  const handleDeleteRequest = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this request?");
+    if (!confirmDelete) return;
+  
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Unauthorized: Please log in first.");
+  
+      // Step 1: Fetch Blood Request Details
+      const bloodRequestRes = await axios.get(`${API_BASE_URL}/blood-request/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (!bloodRequestRes.data.success) throw new Error("Blood request not found.");
+  
+      const patientId = bloodRequestRes.data.bloodRequest.patientId?._id;
+      if (!patientId) throw new Error("Patient details not found.");
+  
+      // Step 2: Fetch Patient Details
+      const patientRes = await axios.get(`http://localhost:3000/api/v3/details/${patientId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (!patientRes.data.success) throw new Error("Patient details retrieval failed.");
+  
+      // Step 3: Delete Blood Request
+      const deleteRequestRes = await axios.delete(`${API_BASE_URL}/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (!deleteRequestRes.data.success) throw new Error(deleteRequestRes.data.message);
+  
+      // Step 4: Delete Patient Record (if available)
+      if (patientRes.data.patient?._id) {
+        const deletePatientRes = await axios.delete(`http://localhost:3000/api/v3/delete/${patientId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        if (!deletePatientRes.data.success) throw new Error(deletePatientRes.data.message);
+      }
+  
+      alert("Blood request and patient record deleted successfully.");
+      navigate("/");
+    } catch (error) {
+      alert(error.response?.data?.message || error.message || "Error deleting request.");
+    }
+  };
+  
+  
 
   if (loading) {
     return (
@@ -133,7 +182,7 @@ const PatientRequest = () => {
           </button>
           <button
             className="px-6 py-3 bg-red-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-red-700 transition"
-            onClick={() => navigate(-1)}
+            onClick={handleDeleteRequest}
           >
             ❌ Delete
           </button>
@@ -167,3 +216,5 @@ const PatientRequest = () => {
 };
 
 export default PatientRequest;
+
+

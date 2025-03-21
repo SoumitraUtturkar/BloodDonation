@@ -8,22 +8,29 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        console.log("Fetching profile...");
         const token = localStorage.getItem("token");
+        console.log("Token retrieved:", token);
+        
         const response = await fetch("http://localhost:3000/api/v5/profile", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization:` Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
+
+        console.log("Response status:", response.status);
 
         if (!response.ok) {
           throw new Error("Failed to fetch profile");
         }
 
         const data = await response.json();
+        console.log("Profile data received:", data);
         setProfile(data.data);
       } catch (error) {
+        console.error("Error fetching profile:", error);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -33,8 +40,16 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
-  if (loading) return <p>Loading profile...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (loading) {
+    console.log("Loading profile...");
+    return <p>Loading profile...</p>;
+  }
+  if (error) {
+    console.error("Error in component:", error);
+    return <p>Error: {error}</p>;
+  }
+
+  console.log("Profile state:", profile);
 
   return (
     <div className="p-6 max-w-4xl mx-auto shadow-lg rounded-2xl bg-white">
@@ -70,13 +85,9 @@ const Profile = () => {
         <h3 className="text-2xl font-semibold mb-4 text-red-600">Previous Donors</h3>
         {profile.previousDonors && profile.previousDonors.length > 0 ? (
           profile.previousDonors.map((donor, index) => (
-            <div key={index} className="card card-side bg-base-100 shadow-md border-2 border-gray-300 hover:border-red-500 transition-all duration-300 p-4 rounded-xl flex items-center mb-4">
+            <div key={index} className="card bg-base-100 shadow-md border-2 border-gray-300 hover:border-red-500 transition-all duration-300 p-4 rounded-xl flex items-center mb-4">
               <figure className="p-4">
-                <img
-                  className="w-24 h-24 rounded-full object-cover border-4 border-gray-200 shadow-sm"
-                  src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                  alt="Donor"
-                />
+                <img className="w-24 h-24 rounded-full object-cover border-4 border-gray-200 shadow-sm" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Donor" />
               </figure>
               <div className="card-body">
                 <h2 className="card-title text-lg font-semibold text-gray-800">{donor.name}</h2>
@@ -87,31 +98,6 @@ const Profile = () => {
           ))
         ) : (
           <p className="text-gray-500">No previous donors found.</p>
-        )}
-      </div>
-
-      {/* Previous Donations Section */}
-      <div className="mt-8">
-        <h3 className="text-2xl font-semibold mb-4 text-red-600">Previous Donations</h3>
-        {profile.donatedPatients && profile.donatedPatients.length > 0 ? (
-          profile.donatedPatients.map((patient, index) => (
-            <div key={index} className="card card-side bg-base-100 shadow-md border-2 border-gray-300 hover:border-red-500 transition-all duration-300 p-4 rounded-xl flex items-center mb-4">
-              <figure className="p-4">
-                <img
-                  className="w-24 h-24 rounded-full object-cover border-4 border-gray-200 shadow-sm"
-                  src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                  alt="Patient"
-                />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title text-lg font-semibold text-gray-800">{patient.name}</h2>
-                <p className="text-sm text-gray-600">Blood Type: {patient.bloodType || "N/A"}</p>
-                <p className="text-sm text-gray-600">Contact: {patient.contactNumber || "N/A"}</p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500">No previous donations found.</p>
         )}
       </div>
     </div>

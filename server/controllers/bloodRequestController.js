@@ -5,66 +5,97 @@ const Patient = require("../models/Patient");
 const Donor = require("../models/Donor");
 const mailSender = require('../utils/mailSender'); // Adjust the path if needed
 
-// ✅ 1. Create a Blood Request
 exports.createBloodRequest = async (req, res) => {
-    try {
-      const { patientId } = req.body;
-  
-      // Validate patientId
-      if (!mongoose.Types.ObjectId.isValid(patientId)) {
-        return res.status(400).json({ success: false, message: "Invalid Patient ID." });
-      }
-  
-      // Find Patient
-      const patient = await Patient.findById(patientId).populate('userId', 'email name');
-      if (!patient || !patient.userId?.email) {
-        return res.status(404).json({ success: false, message: "Patient not found or missing email." });
-      }
-  
-      // Create Blood Request
-      const bloodRequest = new BloodRequest({ patientId });
-      await bloodRequest.save();
-  
-      // ✅ Send Email to Patient
-      const emailBody = `
-        <h2>Hello ${patient.name},</h2>
-        <p>Your blood request has been successfully generated.</p>
-        <p>We will notify you once a donor accepts your request.</p>
-        <p>Thank you for using RaktVahini. Stay strong!</p>
-        <p>Regards, <br> RaktVahini Team</p>
-      `;
-  
-      console.log("📧 Sending Blood Request Confirmation Email...");
-      await mailSender(patient.userId.email, "Blood Request Submitted Successfully", emailBody);
-      console.log("✅ Email sent to patient.");
-  
-      // Response to Client
-      res.status(201).json({ 
-        success: true, 
-        message: "Blood request created successfully and email sent to the patient.", 
-        bloodRequest 
-      });
-    } catch (error) {
-      console.error("❗ Error creating blood request:", error);
-      res.status(500).json({ success: false, message: error.message });
+  try {
+    const { patientId } = req.body;
+
+    // Validate patientId
+    if (!mongoose.Types.ObjectId.isValid(patientId)) {
+      return res.status(400).json({ success: false, message: "Invalid Patient ID." });
     }
-  };// ✅ 2. Accept a Blood Request
-  const isBloodTypeCompatible = (donorBloodType, patientBloodType) => {
-    const compatibility = {
-      "O-": ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],
-      "O+": ["O+", "A+", "B+", "AB+"],
-      "A-": ["A-", "A+", "AB-", "AB+"],
-      "A+": ["A+", "AB+"],
-      "B-": ["B-", "B+", "AB-", "AB+"],
-      "B+": ["B+", "AB+"],
-      "AB-": ["AB-", "AB+"],
-      "AB+": ["AB+"],
-    };
-  
-    return compatibility[donorBloodType]?.includes(patientBloodType) || false;
-  };
-  
-  
+
+    // Find Patient
+    const patient = await Patient.findById(patientId).populate('userId', 'email name');
+    if (!patient || !patient.userId?.email) {
+      return res.status(404).json({ success: false, message: "Patient not found or missing email." });
+    }
+
+    // Create Blood Request
+    const bloodRequest = new BloodRequest({ patientId });
+    await bloodRequest.save();
+
+    // ✅ Send Email to Patient
+    const emailBody = `
+      <h2>Hello ${patient.name},</h2>
+      <p>Your blood request has been successfully submitted.</p>
+      <p>We will notify you once a donor accepts your request.</p>
+      <p>Thank you for using RaktVahini. Stay strong!</p>
+      <p>Regards, <br> RaktVahini Team</p>
+    `;
+    await mailSender(patient.userId.email, "Blood Request Submitted Successfully", emailBody);
+
+    console.log("✅ Email sent to patient.");
+
+    // ✅ Find Compatible Donors
+    const compatibleDonors = await Donor.find({ 
+      bloodType: { $in: compatibility[patient.bloodType] },
+      isEligible: true
+    }).populate('userId', 'email name');
+
+    if (compatibleDonors.length > 0) {
+      console.log(`🔎 Found ${compatibleDonors.length} compatible donors.`);
+      
+      // ✅ Send Email to Each Compatible Donor
+      compatibleDonors.forEach(async (donor) => {
+        const donorEmailBody = `
+          <h2>Dear ${donor.name},</h2>
+          <p>We have an urgent blood request from a patient who needs ${patient.bloodType} blood.</p>
+          <p>Your generous donation can save a life. Please consider responding promptly.</p>
+          <p>Visit RaktVahini to accept the request.</p>
+          <p>Thank you for your kindness!</p>
+          <p>Regards, <br> RaktVahini Team</p>
+        `;
+
+        try {
+          await mailSender(donor.userId.email, "Urgent: Blood Donation Request", donorEmailBody);
+          console.log(`📧 Email sent to ${donor.name} (${donor.userId.email}).`);
+        } catch (error) {
+          console.error(`❗ Failed to send email to ${donor.name}:, error.message`);
+        }
+      });
+    } else {
+      console.log("⚠ No compatible donors found.");
+    }
+
+    // Response to Client
+    res.status(201).json({ 
+      success: true, 
+      message: "Blood request created successfully. Emails sent to compatible donors.",
+      bloodRequest 
+    });
+
+  } catch (error) {
+    console.error("❗ Error creating blood request:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ✅ Blood Type Compatibility Function
+const compatibility = {
+  "O-": ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],
+  "O+": ["O+", "A+", "B+", "AB+"],
+  "A-": ["A-", "A+", "AB-", "AB+"],
+  "A+": ["A+", "AB+"],
+  "B-": ["B-", "B+", "AB-", "AB+"],
+  "B+": ["B+", "AB+"],
+  "AB-": ["AB-", "AB+"],
+  "AB+": ["AB+"],
+};
+
+
+
+
+
   exports.acceptBloodRequest = async (req, res) => {
   try {
     const { requestId } = req.params;
@@ -161,7 +192,6 @@ exports.createBloodRequest = async (req, res) => {
 
 
 
-
 exports.completeBloodRequest = async (req, res) => {
   try {
     const { requestId } = req.params;
@@ -196,8 +226,6 @@ exports.completeBloodRequest = async (req, res) => {
 
     console.log("✅ Blood request found. Patient:", patient?.name, "Donor:", donor?.name);
 
-    
-
     // Ensure userId exists for both
     if (!patient.userId || !donor.userId) {
       console.log("❗ Missing userId. Patient UserId:", patient?.userId, "Donor UserId:", donor?.userId);
@@ -226,15 +254,21 @@ exports.completeBloodRequest = async (req, res) => {
     );
     console.log("✅ Updated Donor's donatedPatients:", updatedDonor.donatedPatients);
 
-    res.status(200).json({ success: true, message: "Blood request completed successfully.", bloodRequest });
+    // Remove the completed blood request
+    await BloodRequest.findByIdAndDelete(requestId);
+    console.log("🗑 Blood request removed from the database.");
+
+    // Remove the corresponding patient from the Patient schema
+    await Patient.findByIdAndDelete(patient._id);
+    console.log("🗑 Patient removed from the database.");
+
+    res.status(200).json({ success: true, message: "Blood request completed and removed successfully." });
 
   } catch (error) {
     console.error("❗ Error completing blood request:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
-
   
 // ✅ 4. Reject a Blood Request
 
@@ -366,3 +400,26 @@ exports.getBloodRequestIdByUserId = async (req, res) => {
   }
 };
 
+// ✅ 7. Delete a Blood Request
+exports.deleteBloodRequest = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(requestId)) {
+      return res.status(400).json({ success: false, message: "Invalid Request ID." });
+    }
+
+    // Find and delete the Blood Request
+    const deletedRequest = await BloodRequest.findByIdAndDelete(requestId);
+
+    if (!deletedRequest) {
+      return res.status(404).json({ success: false, message: "Blood request not found." });
+    }
+
+    res.status(200).json({ success: true, message: "Blood request deleted successfully." });
+  } catch (error) {
+    console.error("❗ Error deleting blood request:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

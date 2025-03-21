@@ -175,6 +175,8 @@ const Home = () => {
     checkUserStatus();
   }, []);
 
+  
+
   // Handle "Donate Blood" button click
   const handleDonateBlood = async () => {
     setLoading(true);
